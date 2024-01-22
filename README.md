@@ -1,2 +1,2 @@
 # discord-clone
-A MERN discord clone. 
+A react discord clone. 
