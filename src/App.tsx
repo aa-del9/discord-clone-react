@@ -3,7 +3,7 @@ import './App.css'
 function App() {
 
   return (
-    <div>Discord Clone</div>
+    <p className="underline">discord clone</p>
   )
 }
 
