@@ -12,7 +12,13 @@
  
     --popover: 0 0% 100%;
     --popover-foreground: 20 14.3% 4.1%;
- 
+
+    --input-bg: 0 0% 100%;
+    --input-fg: 20 14.3% 4.1%;
+
+    --indigo: 235 86% 65%;
+    --indigo-foreground: 0 0% 100%;
+
     --primary: 24 9.8% 10%;
     --primary-foreground: 60 9.1% 97.8%;
  
@@ -31,22 +37,32 @@
     --border: 20 5.9% 90%;
     --input: 20 5.9% 90%;
     --ring: 20 14.3% 4.1%;
+
+    --link: 240 100% 70%;
  
-    --radius: 0.5rem;
+    --radius: 5px;
+
+    --loginBackground: url("/public/assets/background.png");
   }
  
   .dark {
-    --background: 20 14.3% 4.1%;
+    --background: 223, 7%, 21%;
     --foreground: 60 9.1% 97.8%;
  
     --card: 20 14.3% 4.1%;
     --card-foreground: 60 9.1% 97.8%;
  
+    --input-bg: 225, 6%, 13%;
+    --input-fg: 20 14.3% 4.1%;
+
     --popover: 20 14.3% 4.1%;
     --popover-foreground: 60 9.1% 97.8%;
  
     --primary: 60 9.1% 97.8%;
     --primary-foreground: 24 9.8% 10%;
+
+    --indigo: 235 86% 65%;
+    --indigo-foreground: 0 0% 100%;
  
     --secondary: 12 6.5% 15.1%;
     --secondary-foreground: 60 9.1% 97.8%;
@@ -54,6 +70,8 @@
     --muted: 12 6.5% 15.1%;
     --muted-foreground: 24 5.4% 63.9%;
  
+    --link: 240 100% 70%;
+
     --accent: 12 6.5% 15.1%;
     --accent-foreground: 60 9.1% 97.8%;
  
