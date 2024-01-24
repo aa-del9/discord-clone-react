@@ -42,9 +42,8 @@ const LoginModal = () => {
     console.log(values);
   };
 
-  const registerClicked = () => {};
   return (
-    <Dialog open={true}>
+    <Dialog open>
       <DialogContent className="flex bg-background max-h-102 text-primary p-8 overflow-hidden max-w-[784px]">
         <div className="absolute right-4 top-4 rounded-sm opacity-70 ring-offset-background transition-opacity hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:pointer-events-none data-[state=open]:bg-accent data-[state=open]:text-muted-foreground">
           <ModeToggle />
