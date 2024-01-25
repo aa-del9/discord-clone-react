@@ -78,7 +78,7 @@ const RegisterModal = () => {
 
   return (
     <Dialog open>
-      <DialogContent className="flex flex-col bg-background max-h-102 text-primary p-8 overflow-hidden max-w-[480px]">
+      <DialogContent className="flex flex-col bg-background max-h-50 text-primary p-8 overflow-hidden max-w-[480px]">
         <div className="absolute right-4 top-4 rounded-sm opacity-70 ring-offset-background transition-opacity hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:pointer-events-none data-[state=open]:bg-accent data-[state=open]:text-muted-foreground">
           <ModeToggle />
         </div>
@@ -189,9 +189,13 @@ const RegisterModal = () => {
                           </Button>
                         </FormControl>
                       </PopoverTrigger>
-                      <PopoverContent align="end" className="w-[130px] p-0">
-                        <Command className="bg-zinc-200/60 dark:bg-background">
-                          <CommandGroup>
+                      <PopoverContent
+                        align="end"
+                        className="w-[130px] p-0"
+                        side="top"
+                      >
+                        <Command className="bg-zinc-200/60 dark:bg-background max-h-40">
+                          <CommandGroup className="overflow-y-auto">
                             {(() => {
                               const days = [];
                               for (let day = 1; day < 32; day++) {
@@ -253,9 +257,13 @@ const RegisterModal = () => {
                           </Button>
                         </FormControl>
                       </PopoverTrigger>
-                      <PopoverContent align="end" className="w-[130px] p-0">
-                        <Command className="bg-zinc-200/60 dark:bg-background">
-                          <CommandGroup>
+                      <PopoverContent
+                        align="end"
+                        className="w-[130px] p-0"
+                        side="top"
+                      >
+                        <Command className="bg-zinc-200/60 dark:bg-background max-h-40">
+                          <CommandGroup className="overflow-y-auto">
                             {months.map((month) => (
                               <CommandItem
                                 value={month.value}
@@ -304,9 +312,13 @@ const RegisterModal = () => {
                           </Button>
                         </FormControl>
                       </PopoverTrigger>
-                      <PopoverContent align="end" className="w-[130px] p-0">
-                        <Command className="bg-zinc-200/60 dark:bg-background">
-                          <CommandGroup>
+                      <PopoverContent
+                        align="end"
+                        className="w-[130px] p-0"
+                        side="top"
+                      >
+                        <Command className="bg-zinc-200/60 dark:bg-background max-h-40">
+                          <CommandGroup className="overflow-y-auto">
                             {(() => {
                               const years = [];
                               for (let year = 1872; year < 2022; year++) {
@@ -352,15 +364,18 @@ const RegisterModal = () => {
                 tips, and special offers. You can opt out at any time.
               </label>
             </div>
+
+            <Button
+              type="submit"
+              variant="default"
+              size="lg"
+              className="bg-indigo text-indigo-foreground text-base mt-2 hover:bg-indigo rounded-[3px] px-4 py-0.5 w-[100%]"
+            >
+              Continue
+            </Button>
           </form>
         </Form>
-        <Button
-          variant="default"
-          size="lg"
-          className="bg-indigo text-indigo-foreground text-base mt-2 hover:bg-indigo rounded-[3px] px-4 py-0.5"
-        >
-          Continue
-        </Button>
+
         <p className="text-xs text-zinc-800/70 dark:text-zinc-400 h-3 ">
           By registering, you agree to Discord's{" "}
           <Button
