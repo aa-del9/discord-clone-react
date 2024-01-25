@@ -97,19 +97,26 @@ const LoginModal = () => {
                   </FormItem>
                 )}
               />
+              <div className="flex flex-col ">
+                <Button
+                  variant="link"
+                  className="text-xs text-link px-0 justify-start"
+                >
+                  Forgot your password?
+                </Button>
+                <Button
+                  variant="default"
+                  size="lg"
+                  className="bg-indigo text-indigo-foreground text-base mt-2 hover:bg-indigo rounded-[3px] px-4 py-0.5"
+                  type="submit"
+                >
+                  Log In
+                </Button>
+              </div>
             </form>
           </Form>
-          <Button variant="link" className="text-xs text-link px-0">
-            Forgot your password?
-          </Button>
+
           <div className="flex flex-col">
-            <Button
-              variant="default"
-              size="lg"
-              className="bg-indigo text-indigo-foreground text-base mt-2 hover:bg-indigo rounded-[3px] px-4 py-0.5"
-            >
-              Log In
-            </Button>
             <div className="h-3">
               <p className="text-xs text-zinc-900 dark:text-zinc-400">
                 Need an account?{" "}
