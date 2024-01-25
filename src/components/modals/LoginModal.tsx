@@ -15,21 +15,20 @@ import {
   FormField,
   FormItem,
   FormLabel,
+  FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { ModeToggle } from "../ui/mode-toggle";
 import { useNavigate } from "react-router-dom";
-
-const formSchema = z.object({
-  email: z.string().min(1, { message: "Email or Phone number Required" }),
-  password: z.string().min(1, { message: "Required" }),
-});
+import { LoginVaidation } from "@/lib/validation";
+import { loginUser } from "@/lib/appwrite/api";
+import Loader from "../shared/Loader";
 
 const LoginModal = () => {
   const navigate = useNavigate();
-  const form = useForm({
-    resolver: zodResolver(formSchema),
+  const form = useForm<z.infer<typeof LoginVaidation>>({
+    resolver: zodResolver(LoginVaidation),
     defaultValues: {
       email: "",
       password: "",
@@ -38,8 +37,9 @@ const LoginModal = () => {
 
   const isLoading = form.formState.isSubmitting;
 
-  const onSubmit = async (values: z.infer<typeof formSchema>) => {
+  const onSubmit = async (values: z.infer<typeof LoginVaidation>) => {
     console.log(values);
+    await loginUser(values).then((res: unknown) => console.log("res", res));
   };
 
   return (
@@ -74,6 +74,7 @@ const LoginModal = () => {
                         {...field}
                       />
                     </FormControl>
+                    <FormMessage />
                   </FormItem>
                 )}
               />
@@ -94,6 +95,7 @@ const LoginModal = () => {
                         {...field}
                       />
                     </FormControl>
+                    <FormMessage />
                   </FormItem>
                 )}
               />
@@ -110,7 +112,13 @@ const LoginModal = () => {
                   className="bg-indigo text-indigo-foreground text-base mt-2 hover:bg-indigo rounded-[3px] px-4 py-0.5"
                   type="submit"
                 >
-                  Log In
+                  {isLoading ? (
+                    <div className="flex gap-2">
+                      <Loader /> Loading...
+                    </div>
+                  ) : (
+                    "Log In"
+                  )}
                 </Button>
               </div>
             </form>

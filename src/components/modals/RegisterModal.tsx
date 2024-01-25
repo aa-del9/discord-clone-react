@@ -28,6 +28,9 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { ModeToggle } from "../ui/mode-toggle";
 import { useNavigate } from "react-router-dom";
+import { SignupValidation } from "@/lib/validation";
+import { createUserAccount } from "@/lib/appwrite/api";
+import Loader from "../shared/Loader";
 
 const months = [
   { label: "January", value: "jan" },
@@ -44,21 +47,11 @@ const months = [
   { label: "December", value: "dec" },
 ] as const;
 
-const formSchema = z.object({
-  email: z.string().min(1, { message: "Email or Phone number Required" }),
-  displayName: z.string().min(1, { message: "Email or Phone number Required" }),
-  username: z.string().min(1, { message: "Email or Phone number Required" }),
-  password: z.string().min(1, { message: "Required" }),
-  day: z.string().min(1, { message: "Required" }),
-  month: z.string().min(1, { message: "Required" }),
-  year: z.string().min(1, { message: "Required" }),
-});
-
 const RegisterModal = () => {
   const navigate = useNavigate();
 
-  const form = useForm({
-    resolver: zodResolver(formSchema),
+  const form = useForm<z.infer<typeof SignupValidation>>({
+    resolver: zodResolver(SignupValidation),
     defaultValues: {
       email: "",
       displayName: "",
@@ -72,8 +65,11 @@ const RegisterModal = () => {
 
   const isLoading = form.formState.isSubmitting;
 
-  const onSubmit = async (values: z.infer<typeof formSchema>) => {
+  const onSubmit = async (values: z.infer<typeof SignupValidation>) => {
     console.log(values);
+    await createUserAccount(values).then((res: unknown) =>
+      console.log("res", res)
+    );
   };
 
   return (
@@ -104,6 +100,7 @@ const RegisterModal = () => {
                       {...field}
                     />
                   </FormControl>
+                  <FormMessage />
                 </FormItem>
               )}
             />
@@ -122,6 +119,7 @@ const RegisterModal = () => {
                       {...field}
                     />
                   </FormControl>
+                  <FormMessage />
                 </FormItem>
               )}
             />
@@ -140,6 +138,7 @@ const RegisterModal = () => {
                       {...field}
                     />
                   </FormControl>
+                  <FormMessage />
                 </FormItem>
               )}
             />
@@ -160,6 +159,7 @@ const RegisterModal = () => {
                       {...field}
                     />
                   </FormControl>
+                  <FormMessage />
                 </FormItem>
               )}
             />
@@ -287,6 +287,7 @@ const RegisterModal = () => {
                         </Command>
                       </PopoverContent>
                     </Popover>
+                    <FormMessage />
                   </FormItem>
                 )}
               />
@@ -371,7 +372,13 @@ const RegisterModal = () => {
               size="lg"
               className="bg-indigo text-indigo-foreground text-base mt-2 hover:bg-indigo rounded-[3px] px-4 py-0.5 w-[100%]"
             >
-              Continue
+              {isLoading ? (
+                <div className="flex gap-2">
+                  <Loader /> Loading...
+                </div>
+              ) : (
+                "Continue"
+              )}
             </Button>
           </form>
         </Form>
