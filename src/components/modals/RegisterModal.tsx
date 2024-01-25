@@ -322,7 +322,7 @@ const RegisterModal = () => {
                           <CommandGroup className="overflow-y-auto">
                             {(() => {
                               const years = [];
-                              for (let year = 1872; year < 2022; year++) {
+                              for (let year = 2021; year > 1871; year--) {
                                 years.push(
                                   <CommandItem
                                     value={year.toString()}
