@@ -14,7 +14,7 @@ export const SignupValidation = z.object({
   password: z
     .string()
     .min(8, { message: "Password should be at least 8 characters long." }),
-  day: z.string().min(1, { message: "Required" }),
-  month: z.string().min(1, { message: "Required" }),
-  year: z.string().min(1, { message: "Required" }),
+  day: z.number().min(1, { message: "Required" }),
+  month: z.number().min(0, { message: "Required" }),
+  year: z.number().min(1, { message: "Required" }),
 });

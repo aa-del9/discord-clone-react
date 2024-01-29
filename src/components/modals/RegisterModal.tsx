@@ -33,20 +33,19 @@ import { createUserAccount } from "@/lib/appwrite/api";
 import Loader from "../shared/Loader";
 
 const months = [
-  { label: "January", value: "jan" },
-  { label: "February", value: "feb" },
-  { label: "March", value: "mar" },
-  { label: "April", value: "apr" },
-  { label: "May", value: "may" },
-  { label: "June", value: "jun" },
-  { label: "July", value: "jul" },
-  { label: "August", value: "aug" },
-  { label: "September", value: "sept" },
-  { label: "October", value: "oct" },
-  { label: "November", value: "nov" },
-  { label: "December", value: "dec" },
+  "January",
+  "February",
+  "March",
+  "April",
+  "May",
+  "June",
+  "July",
+  "August",
+  "September",
+  "October",
+  "November",
+  "December",
 ] as const;
-
 const RegisterModal = () => {
   const navigate = useNavigate();
 
@@ -57,9 +56,9 @@ const RegisterModal = () => {
       displayName: "",
       username: "",
       password: "",
-      day: "",
-      month: "",
-      year: "",
+      day: 0,
+      month: -1,
+      year: 0,
     },
   });
 
@@ -67,9 +66,13 @@ const RegisterModal = () => {
 
   const onSubmit = async (values: z.infer<typeof SignupValidation>) => {
     console.log(values);
-    await createUserAccount(values).then((res: unknown) =>
-      console.log("res", res)
-    );
+    const newUser = await createUserAccount(values);
+    console.log(newUser);
+    if (!newUser) {
+      return;
+    }
+
+    // const session = await signInAccount()
   };
 
   return (
@@ -204,13 +207,13 @@ const RegisterModal = () => {
                                     value={day.toString()}
                                     key={day.toString()}
                                     onSelect={() => {
-                                      form.setValue("day", day.toString());
+                                      form.setValue("day", day);
                                     }}
                                   >
                                     <Check
                                       className={cn(
                                         "mr-2 h-4 w-4",
-                                        day.toString() === field.value
+                                        day === field.value
                                           ? "opacity-100"
                                           : "opacity-0"
                                       )}
@@ -244,14 +247,17 @@ const RegisterModal = () => {
                             role="combobox"
                             className={cn(
                               "bg-zinc-200/60 dark:bg-input justify-between",
-                              !field.value && "text-muted-foreground"
+                              field.value < 0 && "text-muted-foreground"
                             )}
                           >
-                            {field.value
-                              ? months.find(
-                                  (month) =>
-                                    form.getValues("month") === month.value
-                                )?.label
+                            {field.value >= 0
+                              ? months.find((month) => {
+                                  console.log(field.value);
+                                  return (
+                                    form.getValues("month") ===
+                                    months.indexOf(month)
+                                  );
+                                })
                               : "Month"}
                             <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
                           </Button>
@@ -266,21 +272,21 @@ const RegisterModal = () => {
                           <CommandGroup className="overflow-y-auto">
                             {months.map((month) => (
                               <CommandItem
-                                value={month.value}
-                                key={month.label}
+                                value={month}
+                                key={months.indexOf(month)}
                                 onSelect={() => {
-                                  form.setValue("month", month.value);
+                                  form.setValue("month", months.indexOf(month));
                                 }}
                               >
                                 <Check
                                   className={cn(
                                     "mr-2 h-4 w-4",
-                                    month.value === field.value
+                                    months.indexOf(month) === field.value
                                       ? "opacity-100"
                                       : "opacity-0"
                                   )}
                                 />
-                                {month.label}
+                                {month}
                               </CommandItem>
                             ))}
                           </CommandGroup>
@@ -328,13 +334,13 @@ const RegisterModal = () => {
                                     value={year.toString()}
                                     key={year.toString()}
                                     onSelect={() => {
-                                      form.setValue("year", year.toString());
+                                      form.setValue("year", year);
                                     }}
                                   >
                                     <Check
                                       className={cn(
                                         "mr-2 h-4 w-4",
-                                        year.toString() === field.value
+                                        year === field.value
                                           ? "opacity-100"
                                           : "opacity-0"
                                       )}

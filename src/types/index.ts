@@ -50,9 +50,9 @@ export type INewUser = {
   displayName: string;
   username: string;
   password: string;
-  day: string;
-  month: string;
-  year: string;
+  day: number;
+  month: number;
+  year: number;
 };
 
 export type AuthSuccessResponse = {
