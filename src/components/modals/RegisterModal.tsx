@@ -29,8 +29,12 @@ import { Button } from "@/components/ui/button";
 import { ModeToggle } from "../ui/mode-toggle";
 import { useNavigate } from "react-router-dom";
 import { SignupValidation } from "@/lib/validation";
-import { createUserAccount } from "@/lib/appwrite/api";
 import Loader from "../shared/Loader";
+import {
+  useCreateUserAccount,
+  useSignInAccount,
+} from "@/lib/react-query/queriesAndMutations";
+import { useUserContext } from "@/context/AuthContext";
 
 const months = [
   "January",
@@ -48,7 +52,13 @@ const months = [
 ] as const;
 const RegisterModal = () => {
   const navigate = useNavigate();
+  const { checkAuthUser, isLoading: isUserLoading } = useUserContext();
 
+  const { mutateAsync: createUserAccount, isPending: isCreatingUser } =
+    useCreateUserAccount();
+
+  const { mutateAsync: signInAccount, isPending: isSigningIn } =
+    useSignInAccount();
   const form = useForm<z.infer<typeof SignupValidation>>({
     resolver: zodResolver(SignupValidation),
     defaultValues: {
@@ -62,8 +72,6 @@ const RegisterModal = () => {
     },
   });
 
-  const isLoading = form.formState.isSubmitting;
-
   const onSubmit = async (values: z.infer<typeof SignupValidation>) => {
     console.log(values);
     const newUser = await createUserAccount(values);
@@ -72,7 +80,23 @@ const RegisterModal = () => {
       return;
     }
 
-    // const session = await signInAccount()
+    const session = await signInAccount({
+      email: values.email,
+      password: values.password,
+    });
+
+    if (!session) {
+      return;
+    }
+
+    const isLoggedIn = await checkAuthUser();
+
+    if (isLoggedIn) {
+      form.reset();
+      navigate("/app");
+    } else {
+      return;
+    }
   };
 
   return (
@@ -98,7 +122,7 @@ const RegisterModal = () => {
                   </FormLabel>
                   <FormControl>
                     <Input
-                      disabled={isLoading}
+                      disabled={isCreatingUser}
                       className="bg-zinc-200/60 dark:bg-input border-0 focus-visible:ring-0 ring-offset-0"
                       {...field}
                     />
@@ -117,7 +141,7 @@ const RegisterModal = () => {
                   </FormLabel>
                   <FormControl>
                     <Input
-                      disabled={isLoading}
+                      disabled={isCreatingUser}
                       className="bg-zinc-200/60 dark:bg-input border-0 focus-visible:ring-0 ring-offset-0"
                       {...field}
                     />
@@ -136,7 +160,7 @@ const RegisterModal = () => {
                   </FormLabel>
                   <FormControl>
                     <Input
-                      disabled={isLoading}
+                      disabled={isCreatingUser}
                       className="bg-zinc-200/60 dark:bg-input border-0 focus-visible:ring-0 ring-offset-0"
                       {...field}
                     />
@@ -156,7 +180,7 @@ const RegisterModal = () => {
                   <FormControl>
                     <Input
                       type="password"
-                      disabled={isLoading}
+                      disabled={isCreatingUser}
                       className="bg-zinc-200/60 dark:bg-input  border-0 
                                     focus-visible:ring-0 ring-offset-0"
                       {...field}
@@ -251,13 +275,11 @@ const RegisterModal = () => {
                             )}
                           >
                             {field.value >= 0
-                              ? months.find((month) => {
-                                  console.log(field.value);
-                                  return (
+                              ? months.find(
+                                  (month) =>
                                     form.getValues("month") ===
                                     months.indexOf(month)
-                                  );
-                                })
+                                )
                               : "Month"}
                             <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
                           </Button>
@@ -378,7 +400,7 @@ const RegisterModal = () => {
               size="lg"
               className="bg-indigo text-indigo-foreground text-base mt-2 hover:bg-indigo rounded-[3px] px-4 py-0.5 w-[100%]"
             >
-              {isLoading ? (
+              {isCreatingUser ? (
                 <div className="flex gap-2">
                   <Loader /> Loading...
                 </div>
