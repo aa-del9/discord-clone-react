@@ -22,11 +22,16 @@ import { Button } from "@/components/ui/button";
 import { ModeToggle } from "../ui/mode-toggle";
 import { useNavigate } from "react-router-dom";
 import { LoginVaidation } from "@/lib/validation";
-import { loginUser } from "@/lib/appwrite/api";
 import Loader from "../shared/Loader";
+import { useSignInAccount } from "@/lib/react-query/queriesAndMutations";
+import { useUserContext } from "@/context/AuthContext";
 
 const LoginModal = () => {
   const navigate = useNavigate();
+  const { checkAuthUser, isLoading: isUserLoading } = useUserContext();
+
+  const { mutateAsync: signInAccount, isPending: isSigningIn } =
+    useSignInAccount();
   const form = useForm<z.infer<typeof LoginVaidation>>({
     resolver: zodResolver(LoginVaidation),
     defaultValues: {
@@ -39,7 +44,23 @@ const LoginModal = () => {
 
   const onSubmit = async (values: z.infer<typeof LoginVaidation>) => {
     console.log(values);
-    await loginUser(values).then((res: unknown) => console.log("res", res));
+    const session = await signInAccount({
+      email: values.email,
+      password: values.password,
+    });
+
+    if (!session) {
+      return;
+    }
+
+    const isLoggedIn = await checkAuthUser();
+
+    if (isLoggedIn) {
+      form.reset();
+      navigate("/app");
+    } else {
+      return;
+    }
   };
 
   return (
