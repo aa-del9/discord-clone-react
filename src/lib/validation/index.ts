@@ -1,10 +1,10 @@
 import * as z from "zod";
 
 export const LoginVaidation = z.object({
-  email: z.string().min(7, { message: "Email or Phone number Required." }),
+  email: z.string().min(1, { message: "Email or Phone number Required." }),
   password: z
     .string()
-    .min(8, { message: "Password should be at least 8 characters long." }),
+    .min(1, { message: "Password should be at least 8 characters long." }),
 });
 
 export const SignupValidation = z.object({

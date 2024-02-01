@@ -15,23 +15,22 @@ import {
   FormField,
   FormItem,
   FormLabel,
-  FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { ModeToggle } from "../ui/mode-toggle";
+import { ModeToggle } from "../../components/ui/mode-toggle";
 import { useNavigate } from "react-router-dom";
 import { LoginVaidation } from "@/lib/validation";
-import Loader from "../shared/Loader";
-import { useSignInAccount } from "@/lib/react-query/queriesAndMutations";
-import { useUserContext } from "@/context/AuthContext";
+import Loader from "@/components/shared/Loader";
+import { useUserContext } from "@/hooks/use-user-context";
+import { signInAccount } from "@/lib/appwrite/api";
+import { useState } from "react";
+import { cn } from "@/lib/utils";
 
-const LoginModal = () => {
+const LoginForm = () => {
   const navigate = useNavigate();
-  const { checkAuthUser, isLoading: isUserLoading } = useUserContext();
-
-  const { mutateAsync: signInAccount, isPending: isSigningIn } =
-    useSignInAccount();
+  const { checkAuthUser } = useUserContext();
+  const [error, setError] = useState<string>("");
   const form = useForm<z.infer<typeof LoginVaidation>>({
     resolver: zodResolver(LoginVaidation),
     defaultValues: {
@@ -43,18 +42,30 @@ const LoginModal = () => {
   const isLoading = form.formState.isSubmitting;
 
   const onSubmit = async (values: z.infer<typeof LoginVaidation>) => {
-    console.log(values);
     const session = await signInAccount({
       email: values.email,
       password: values.password,
     });
+    console.log(session.$id, "sessionid");
 
-    if (!session) {
+    if (!session.$id) {
+      switch (session.code) {
+        case 401:
+          setError("Login or password is invalid.");
+          break;
+        case 429:
+          setError(
+            "Too many requests. Try at " + (new Date().getHours() + 1) + ":00"
+          );
+          break;
+        default:
+          setError("Something went wrong.");
+          break;
+      }
       return;
     }
 
     const isLoggedIn = await checkAuthUser();
-
     if (isLoggedIn) {
       form.reset();
       navigate("/app");
@@ -85,17 +96,25 @@ const LoginModal = () => {
                 name="email"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel className="uppercase text-xs text-primary dark:text-primary">
+                    <FormLabel
+                      className={cn(
+                        "uppercase text-xs dark:text-primary ",
+                        error && "text-destructive dark:text-destructive"
+                      )}
+                    >
                       Email or phone number
+                      <span className="normal-case italic text-destructive dark:text-destructive">
+                        {error ? " - " + error : " *"}
+                      </span>
                     </FormLabel>
                     <FormControl>
                       <Input
+                        required
                         disabled={isLoading}
                         className="bg-zinc-200/60 dark:bg-input border-0 focus-visible:ring-0 ring-offset-0"
                         {...field}
                       />
                     </FormControl>
-                    <FormMessage />
                   </FormItem>
                 )}
               />
@@ -104,11 +123,20 @@ const LoginModal = () => {
                 name="password"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel className="uppercase text-xs dark:text-primary">
-                      password
+                    <FormLabel
+                      className={cn(
+                        "uppercase text-xs dark:text-primary ",
+                        error && "text-destructive dark:text-destructive"
+                      )}
+                    >
+                      password{" "}
+                      <span className="normal-case italic text-destructive dark:text-destructive">
+                        {error ? " - " + error : " *"}
+                      </span>
                     </FormLabel>
                     <FormControl>
                       <Input
+                        required
                         type="password"
                         disabled={isLoading}
                         className="bg-zinc-200/60 dark:bg-input  border-0 
@@ -116,7 +144,6 @@ const LoginModal = () => {
                         {...field}
                       />
                     </FormControl>
-                    <FormMessage />
                   </FormItem>
                 )}
               />
@@ -177,4 +204,4 @@ const LoginModal = () => {
   );
 };
 
-export default LoginModal;
+export default LoginForm;
