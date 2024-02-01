@@ -16,7 +16,6 @@ import {
   FormField,
   FormItem,
   FormLabel,
-  FormMessage,
 } from "@/components/ui/form";
 import { Command, CommandGroup, CommandItem } from "@/components/ui/command";
 import {
@@ -26,55 +25,74 @@ import {
 } from "@/components/ui/popover";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { ModeToggle } from "../ui/mode-toggle";
+import { ModeToggle } from "../../components/ui/mode-toggle";
 import { useNavigate } from "react-router-dom";
+import { SignupValidation } from "@/lib/validation";
+import Loader from "../../components/shared/Loader";
+import { useUserContext } from "@/hooks/use-user-context";
+import { createUserAccount, signInAccount } from "@/lib/appwrite/api";
+import { useState } from "react";
 
 const months = [
-  { label: "January", value: "jan" },
-  { label: "February", value: "feb" },
-  { label: "March", value: "mar" },
-  { label: "April", value: "apr" },
-  { label: "May", value: "may" },
-  { label: "June", value: "jun" },
-  { label: "July", value: "jul" },
-  { label: "August", value: "aug" },
-  { label: "September", value: "sept" },
-  { label: "October", value: "oct" },
-  { label: "November", value: "nov" },
-  { label: "December", value: "dec" },
+  "January",
+  "February",
+  "March",
+  "April",
+  "May",
+  "June",
+  "July",
+  "August",
+  "September",
+  "October",
+  "November",
+  "December",
 ] as const;
-
-const formSchema = z.object({
-  email: z.string().min(1, { message: "Email or Phone number Required" }),
-  displayName: z.string().min(1, { message: "Email or Phone number Required" }),
-  username: z.string().min(1, { message: "Email or Phone number Required" }),
-  password: z.string().min(1, { message: "Required" }),
-  day: z.string().min(1, { message: "Required" }),
-  month: z.string().min(1, { message: "Required" }),
-  year: z.string().min(1, { message: "Required" }),
-});
-
-const RegisterModal = () => {
+const RegisterForm = () => {
   const navigate = useNavigate();
+  const { checkAuthUser } = useUserContext();
+  const [error, setError] = useState<string>("");
 
-  const form = useForm({
-    resolver: zodResolver(formSchema),
+  const form = useForm<z.infer<typeof SignupValidation>>({
+    resolver: zodResolver(SignupValidation),
     defaultValues: {
       email: "",
       displayName: "",
       username: "",
       password: "",
-      day: "",
-      month: "",
-      year: "",
+      day: 0,
+      month: -1,
+      year: 0,
     },
   });
 
-  const isLoading = form.formState.isSubmitting;
-
-  const onSubmit = async (values: z.infer<typeof formSchema>) => {
+  const onSubmit = async (values: z.infer<typeof SignupValidation>) => {
     console.log(values);
+    const newUser = await createUserAccount(values);
+    console.log(newUser);
+    if (!newUser) {
+      return;
+    }
+
+    const session = await signInAccount({
+      email: values.email,
+      password: values.password,
+    });
+
+    if (!session.$id) {
+      return;
+    }
+
+    const isLoggedIn = await checkAuthUser();
+
+    if (isLoggedIn) {
+      form.reset();
+      navigate("/app");
+    } else {
+      return;
+    }
   };
+
+  const isCreatingUser = form.formState.isSubmitting;
 
   return (
     <Dialog open>
@@ -88,18 +106,33 @@ const RegisterModal = () => {
           </DialogTitle>
         </DialogHeader>
         <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+          <form
+            onSubmit={form.handleSubmit(onSubmit, () => {
+              setError("Required");
+            })}
+            className="space-y-4"
+          >
             <FormField
               control={form.control}
               name="email"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className="uppercase text-xs text-primary dark:text-primary">
+                  <FormLabel
+                    className={cn(
+                      "uppercase text-xs dark:text-primary ",
+                      error &&
+                        !field.value &&
+                        "text-destructive dark:text-destructive"
+                    )}
+                  >
                     Email
+                    <span className="normal-case italic text-destructive dark:text-destructive">
+                      {error && !field.value ? " - " + error : " *"}
+                    </span>
                   </FormLabel>
                   <FormControl>
                     <Input
-                      disabled={isLoading}
+                      disabled={isCreatingUser}
                       className="bg-zinc-200/60 dark:bg-input border-0 focus-visible:ring-0 ring-offset-0"
                       {...field}
                     />
@@ -112,12 +145,12 @@ const RegisterModal = () => {
               name="displayName"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className="uppercase text-xs text-primary dark:text-primary">
+                  <FormLabel className="uppercase text-xs dark:text-primary ">
                     Display name
                   </FormLabel>
                   <FormControl>
                     <Input
-                      disabled={isLoading}
+                      disabled={isCreatingUser}
                       className="bg-zinc-200/60 dark:bg-input border-0 focus-visible:ring-0 ring-offset-0"
                       {...field}
                     />
@@ -130,12 +163,22 @@ const RegisterModal = () => {
               name="username"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className="uppercase text-xs text-primary dark:text-primary">
+                  <FormLabel
+                    className={cn(
+                      "uppercase text-xs dark:text-primary ",
+                      error &&
+                        !field.value &&
+                        "text-destructive dark:text-destructive"
+                    )}
+                  >
                     username
+                    <span className="normal-case italic text-destructive dark:text-destructive">
+                      {error && !field.value ? " - " + error : " *"}
+                    </span>
                   </FormLabel>
                   <FormControl>
                     <Input
-                      disabled={isLoading}
+                      disabled={isCreatingUser}
                       className="bg-zinc-200/60 dark:bg-input border-0 focus-visible:ring-0 ring-offset-0"
                       {...field}
                     />
@@ -148,13 +191,23 @@ const RegisterModal = () => {
               name="password"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className="uppercase text-xs dark:text-primary">
+                  <FormLabel
+                    className={cn(
+                      "uppercase text-xs dark:text-primary ",
+                      error &&
+                        !field.value &&
+                        "text-destructive dark:text-destructive"
+                    )}
+                  >
                     password
+                    <span className="normal-case italic text-destructive dark:text-destructive">
+                      {error && !field.value ? " - " + error : " *"}
+                    </span>
                   </FormLabel>
                   <FormControl>
                     <Input
                       type="password"
-                      disabled={isLoading}
+                      disabled={isCreatingUser}
                       className="bg-zinc-200/60 dark:bg-input  border-0 
                                     focus-visible:ring-0 ring-offset-0"
                       {...field}
@@ -169,8 +222,19 @@ const RegisterModal = () => {
                 name="day"
                 render={({ field }) => (
                   <FormItem className="grow flex flex-col">
-                    <FormLabel className="uppercase text-xs dark:text-primary">
+                    <FormLabel
+                      className={cn(
+                        "uppercase text-xs dark:text-primary ",
+                        error &&
+                          !field.value &&
+                          !field.value &&
+                          "text-destructive dark:text-destructive"
+                      )}
+                    >
                       Date of birth
+                      <span className="normal-case italic text-destructive dark:text-destructive">
+                        {error && !field.value ? " - " + error : " *"}
+                      </span>
                     </FormLabel>
 
                     <Popover>
@@ -204,13 +268,13 @@ const RegisterModal = () => {
                                     value={day.toString()}
                                     key={day.toString()}
                                     onSelect={() => {
-                                      form.setValue("day", day.toString());
+                                      form.setValue("day", day);
                                     }}
                                   >
                                     <Check
                                       className={cn(
                                         "mr-2 h-4 w-4",
-                                        day.toString() === field.value
+                                        day === field.value
                                           ? "opacity-100"
                                           : "opacity-0"
                                       )}
@@ -225,8 +289,6 @@ const RegisterModal = () => {
                         </Command>
                       </PopoverContent>
                     </Popover>
-
-                    <FormMessage />
                   </FormItem>
                 )}
               />
@@ -244,14 +306,15 @@ const RegisterModal = () => {
                             role="combobox"
                             className={cn(
                               "bg-zinc-200/60 dark:bg-input justify-between",
-                              !field.value && "text-muted-foreground"
+                              field.value < 0 && "text-muted-foreground"
                             )}
                           >
-                            {field.value
+                            {field.value >= 0
                               ? months.find(
                                   (month) =>
-                                    form.getValues("month") === month.value
-                                )?.label
+                                    form.getValues("month") ===
+                                    months.indexOf(month)
+                                )
                               : "Month"}
                             <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
                           </Button>
@@ -266,21 +329,21 @@ const RegisterModal = () => {
                           <CommandGroup className="overflow-y-auto">
                             {months.map((month) => (
                               <CommandItem
-                                value={month.value}
-                                key={month.label}
+                                value={month}
+                                key={months.indexOf(month)}
                                 onSelect={() => {
-                                  form.setValue("month", month.value);
+                                  form.setValue("month", months.indexOf(month));
                                 }}
                               >
                                 <Check
                                   className={cn(
                                     "mr-2 h-4 w-4",
-                                    month.value === field.value
+                                    months.indexOf(month) === field.value
                                       ? "opacity-100"
                                       : "opacity-0"
                                   )}
                                 />
-                                {month.label}
+                                {month}
                               </CommandItem>
                             ))}
                           </CommandGroup>
@@ -321,19 +384,19 @@ const RegisterModal = () => {
                           <CommandGroup className="overflow-y-auto">
                             {(() => {
                               const years = [];
-                              for (let year = 1872; year < 2022; year++) {
+                              for (let year = 2021; year > 1871; year--) {
                                 years.push(
                                   <CommandItem
                                     value={year.toString()}
                                     key={year.toString()}
                                     onSelect={() => {
-                                      form.setValue("year", year.toString());
+                                      form.setValue("year", year);
                                     }}
                                   >
                                     <Check
                                       className={cn(
                                         "mr-2 h-4 w-4",
-                                        year.toString() === field.value
+                                        year === field.value
                                           ? "opacity-100"
                                           : "opacity-0"
                                       )}
@@ -348,8 +411,6 @@ const RegisterModal = () => {
                         </Command>
                       </PopoverContent>
                     </Popover>
-
-                    <FormMessage />
                   </FormItem>
                 )}
               />
@@ -371,7 +432,13 @@ const RegisterModal = () => {
               size="lg"
               className="bg-indigo text-indigo-foreground text-base mt-2 hover:bg-indigo rounded-[3px] px-4 py-0.5 w-[100%]"
             >
-              Continue
+              {isCreatingUser ? (
+                <div className="flex gap-2">
+                  <Loader /> Loading...
+                </div>
+              ) : (
+                "Continue"
+              )}
             </Button>
           </form>
         </Form>
@@ -409,4 +476,4 @@ const RegisterModal = () => {
   );
 };
 
-export default RegisterModal;
+export default RegisterForm;
