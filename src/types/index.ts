@@ -24,10 +24,11 @@ export type INewPost = {
 };
 
 export type IContextType = {
-  user: IUser;
+  user: IUser | null;
   isLoading: boolean;
   setUser: React.Dispatch<React.SetStateAction<IUser>>;
   isAuthenticated: boolean;
+  setIsLoading: React.Dispatch<React.SetStateAction<boolean>>;
   setIsAuthenticated: React.Dispatch<React.SetStateAction<boolean>>;
   checkAuthUser: () => Promise<boolean>;
 };
@@ -42,14 +43,15 @@ export type IUpdatePost = {
   tags?: string;
 };
 
-export type IUser = {
-  accountid: string;
-  username: string;
-  email: string;
-  password: string;
-  displayName: string;
-  dob: Date | string;
-};
+export type IUser =
+  | {
+      accountid: string;
+      username: string;
+      email: string;
+      displayName: string;
+      dob: Date | string;
+    }
+  | undefined;
 
 export type IUserLogin = {
   email: string;
@@ -73,7 +75,7 @@ export type AuthSuccessResponse = {
   name: string;
   registration: string;
   status: boolean;
-  labels: Array<any>;
+  labels: string[];
   passwordUpdate: Date | string;
   email: string;
   phone: string;
