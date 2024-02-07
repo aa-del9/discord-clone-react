@@ -15,12 +15,11 @@ export type IUpdateUser = {
   file: File[];
 };
 
-export type INewPost = {
-  userId: string;
-  caption: string;
-  file: File[];
-  location?: string;
-  tags?: string;
+export type INewServer = {
+  name: string;
+  image: File;
+  creatorid: string;
+  createdAt: Date | string;
 };
 
 export type IContextType = {

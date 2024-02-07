@@ -1,5 +1,5 @@
-import { INewUser, IUserLogin } from "@/types";
-import { account, appwriteConfig, databases } from "./config";
+import { INewServer, INewUser, IUserLogin } from "@/types";
+import { account, appwriteConfig, databases, storage } from "./config";
 import { ID, Query } from "appwrite";
 
 export const createUserAccount = async (user: INewUser) => {
@@ -100,5 +100,85 @@ export const signOutAccount = async () => {
   } catch (error) {
     console.log(error);
     return error;
+  }
+};
+
+export const uploadFile = async (file: File) => {
+  try {
+    const uploadedFile = await storage.createFile(
+      appwriteConfig.storageId,
+      ID.unique(),
+      file
+    );
+    return uploadedFile;
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+export const createServer = async (server: INewServer) => {
+  try {
+    const uploadedFile = await uploadFile(server.image);
+
+    if (!uploadedFile) throw Error;
+
+    const fileUrl = getFilePreview(uploadedFile.$id);
+
+    if (!fileUrl) {
+      await deleteFile(uploadedFile.$id);
+      throw Error;
+    }
+
+    const newServer = await databases.createDocument(
+      appwriteConfig.databaseId,
+      appwriteConfig.serversCollectionId,
+      ID.unique(),
+      {
+        creatorId: server.creatorid,
+        name: server.name,
+        createdAt: new Date(),
+        imageUrl: fileUrl,
+      }
+    );
+    if (!newServer) {
+      await deleteFile(uploadedFile.$id);
+      throw Error;
+    }
+
+    return newServer;
+  } catch (error) {
+    return error;
+  }
+};
+
+export const getServers = async () => {};
+
+export const getFilePreview = (fileId: string) => {
+  try {
+    const fileUrl = storage.getFilePreview(
+      appwriteConfig.storageId,
+      fileId,
+      2000,
+      2000,
+      "top",
+      100
+    );
+
+    if (!fileUrl) throw Error;
+
+    return fileUrl;
+  } catch (error) {
+    console.log(error);
+    return Error;
+  }
+};
+
+export const deleteFile = async (fileId: string) => {
+  try {
+    await storage.deleteFile(appwriteConfig.storageId, fileId);
+
+    return { status: "ok" };
+  } catch (error) {
+    console.log(error);
   }
 };

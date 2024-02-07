@@ -3,9 +3,9 @@ import "./App.css";
 import AuthPage from "./routes/auth/AuthPage";
 import LoginForm from "@/routes/auth/LoginForm";
 import RegisterForm from "@/routes/auth/RegisterForm";
-import HomePage from "@/routes/_root/HomePage";
+import HomePage from "@/routes/main/HomePage";
 import PrivateRoutes from "@/lib/utils/PrivateRoutes";
-import RootLayout from "@/routes/_root/RootLayout";
+import RootLayout from "@/routes/main/RootLayout";
 
 const App = () => {
   return (
@@ -17,9 +17,9 @@ const App = () => {
         </Route>
 
         <Route element={<PrivateRoutes />}>
-          <Route index element={<RootLayout />} />
+          {/* <Route index element={<RootLayout />} /> */}
           {/* <Route path="/app" element={<SplashScreen />} /> */}
-          <Route path="/app" element={<HomePage />} />
+          <Route path="/app" element={<RootLayout></RootLayout>} />
         </Route>
       </Routes>
       {/* <p className="underline">discord clone</p>
