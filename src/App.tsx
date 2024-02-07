@@ -19,7 +19,7 @@ const App = () => {
         <Route element={<PrivateRoutes />}>
           {/* <Route index element={<RootLayout />} /> */}
           {/* <Route path="/app" element={<SplashScreen />} /> */}
-          <Route path="/app" element={<RootLayout></RootLayout>} />
+          <Route path="/app" element={<RootLayout />} />
         </Route>
       </Routes>
       {/* <p className="underline">discord clone</p>
