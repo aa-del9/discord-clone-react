@@ -1,4 +1,4 @@
-import { INewServer, INewUser, IUserLogin } from "@/types";
+import { INewMember, INewServer, INewUser, IUserLogin } from "@/types";
 import { account, appwriteConfig, databases, storage } from "./config";
 import { ID, Query } from "appwrite";
 
@@ -104,16 +104,18 @@ export const signOutAccount = async () => {
 };
 
 export const uploadFile = async (file: File) => {
-  try {
-    const uploadedFile = await storage.createFile(
-      appwriteConfig.storageId,
-      ID.unique(),
-      file
+  const uploadedFile = await storage
+    .createFile(appwriteConfig.storageId, ID.unique(), file)
+    .then(
+      (res) => {
+        return res;
+      },
+      (err) => {
+        console.log(err);
+        return err;
+      }
     );
-    return uploadedFile;
-  } catch (error) {
-    console.log(error);
-  }
+  return uploadedFile;
 };
 
 export const createServer = async (server: INewServer) => {
@@ -128,20 +130,54 @@ export const createServer = async (server: INewServer) => {
       await deleteFile(uploadedFile.$id);
       throw Error;
     }
+    console.log(fileUrl);
 
-    const newServer = await databases.createDocument(
-      appwriteConfig.databaseId,
-      appwriteConfig.serversCollectionId,
-      ID.unique(),
-      {
-        creatorId: server.creatorid,
-        name: server.name,
-        createdAt: new Date(),
-        imageUrl: fileUrl,
-      }
-    );
+    const newServer = await databases
+      .createDocument(
+        appwriteConfig.databaseId,
+        appwriteConfig.serversCollectionId,
+        ID.unique(),
+        {
+          creatorid: server.creatorid,
+          name: server.name,
+          createdAt: new Date(),
+          imageUrl: fileUrl,
+        }
+      )
+      .then(
+        (res) => {
+          return res;
+        },
+        (err) => {
+          console.log(err);
+          return err;
+        }
+      );
+    console.log(newServer);
+
     if (!newServer) {
       await deleteFile(uploadedFile.$id);
+      console.log("newServer error", newServer);
+
+      throw Error;
+    }
+
+    const newMember = await createMember({
+      role: "creator",
+      serverid: newServer.$id,
+      userid: server.creatorid,
+    }).then(
+      (res) => {
+        return res;
+      },
+      (err) => {
+        console.log(err);
+        return err;
+      }
+    );
+    console.log(!newMember);
+
+    if (!newMember) {
       throw Error;
     }
 
@@ -151,7 +187,45 @@ export const createServer = async (server: INewServer) => {
   }
 };
 
-export const getServers = async () => {};
+export const getUserServers = async (userid: string | undefined) => {
+  const membership = await databases
+    .listDocuments(
+      appwriteConfig.databaseId,
+      appwriteConfig.membersCollectionId,
+      [Query.equal("userid", userid ? userid : "")]
+    )
+    .then(
+      (res) => {
+        return res;
+      },
+      (err) => {
+        console.log(err);
+        return err;
+      }
+    );
+  return membership;
+};
+
+export const createMember = async (member: INewMember) => {
+  const newMember = await databases
+    .createDocument(
+      appwriteConfig.databaseId,
+      appwriteConfig.membersCollectionId,
+      ID.unique(),
+      member
+    )
+    .then(
+      (res) => {
+        return res;
+      },
+      (err) => {
+        console.log(err);
+        return err;
+      }
+    );
+
+  return newMember;
+};
 
 export const getFilePreview = (fileId: string) => {
   try {

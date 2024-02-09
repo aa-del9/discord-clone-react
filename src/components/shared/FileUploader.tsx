@@ -2,6 +2,7 @@ import { convertFileToUrl } from "@/lib/utils";
 import { useState, useCallback } from "react";
 import { FileWithPath, useDropzone } from "react-dropzone";
 import { Button } from "../ui/button";
+import { Trash } from "lucide-react";
 
 type FileUploaderProps = {
   fieldChange: (FILES: File[]) => void;
@@ -14,15 +15,17 @@ const FileUploader = ({ fieldChange, mediaUrl }: FileUploaderProps) => {
   const onDrop = useCallback(
     (acceptedFiles: FileWithPath[]) => {
       setFile(acceptedFiles);
+      console.log(file);
       fieldChange(acceptedFiles);
       setFileUrl(convertFileToUrl(acceptedFiles[0]));
+      console.log(fileUrl);
     },
     [file]
   );
 
   const { getRootProps, getInputProps } = useDropzone({
     onDrop,
-    accept: { "image/*": [".png", ".jpeg", ".jpg    "] },
+    accept: { "image/*": [".png", ".jpeg", ".jpg"] },
   });
   return (
     <div
@@ -33,13 +36,20 @@ const FileUploader = ({ fieldChange, mediaUrl }: FileUploaderProps) => {
 
       {fileUrl ? (
         <>
-          <div className="flex flex-1 justify-center w-full p-5 lg:p-10">
-            <img src={fileUrl} alt="image" className="file-uploader-img" />
+          <div className="flex flex-1 justify-center w-full py-5 lg:p-10">
+            <img
+              src={fileUrl}
+              alt="image"
+              className="file-uploader-img w-[150px] h-[150px] object-fill rounded-[50%]"
+            />
+            <Trash className="relative right-0 h-4 w-4 " />
           </div>
-          <p className="file_uploader-label">Click or drag photo to replace</p>
+          <p className="text-light-4 text-center small-regular w-full p-4 border-t border-t-dark-4">
+            Click or drag photo to replace
+          </p>
         </>
       ) : (
-        <div className="file_uploader-box">
+        <div className="flex flex-col items-center p-7 h-80">
           <img
             src="/assets/icons/file-upload.svg"
             alt="file upload"
@@ -52,7 +62,10 @@ const FileUploader = ({ fieldChange, mediaUrl }: FileUploaderProps) => {
           </h3>
           <p className="text-light-4 small-regular mb-6">SVG, PNG, JPG</p>
 
-          <Button type="button" className="shad-button_dark_4">
+          <Button
+            type="button"
+            className="h-12 bg-dark-4 px-5 text-light-1 flex gap-2 "
+          >
             Select from computer
           </Button>
         </div>

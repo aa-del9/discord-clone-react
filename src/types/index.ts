@@ -18,12 +18,12 @@ export type IUpdateUser = {
 export type INewServer = {
   name: string;
   image: File;
-  creatorid: string;
+  creatorid: string | undefined;
   createdAt: Date | string;
 };
 
 export type IContextType = {
-  user: IUser | null;
+  user: IUser;
   isLoading: boolean;
   setUser: React.Dispatch<React.SetStateAction<IUser>>;
   isAuthenticated: boolean;
@@ -95,6 +95,11 @@ type Member = {
   username: string;
   imageUrl: string;
   role: string;
+};
+export type INewMember = {
+  role: string;
+  userid: string | undefined;
+  serverid: string;
 };
 
 export type ServerWithMembersWithProfiles = Server & {

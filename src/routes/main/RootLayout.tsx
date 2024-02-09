@@ -1,5 +1,4 @@
 import { NavigationSidebar } from "@/components/navigation/navigation-sidebar";
-import { useEffect } from "react";
 import { Outlet } from "react-router-dom";
 
 const RootLayout = () => {

@@ -7,7 +7,7 @@ export const INITIAL_USER = {
 };
 
 export const INITIAL_STATE = {
-  user: undefined,
+  user: INITIAL_USER,
   isLoading: false,
   isAuthenticated: false,
   setIsLoading: () => {},
