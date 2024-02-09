@@ -9,6 +9,7 @@ import { Button } from "../ui/button";
 import { useSignOutAccount } from "@/lib/react-query/queriesAndMutations";
 import { useEffect } from "react";
 import { INITIAL_USER } from "@/lib/constants/auth";
+import { ModeToggle } from "../ui/mode-toggle";
 
 export const NavigationSidebar = () => {
   const { user, setIsAuthenticated, setUser } = useUserContext();
@@ -49,6 +50,9 @@ export const NavigationSidebar = () => {
       </ScrollArea>
       <NavigationAction />
       <Separator className="h-[2px] bg-zinc-300 dark:bg-zinc-700 rounded-md w-10 mx-auto" />
+      <div className="rounded-md opacity-70 ring-offset-background transition-opacity hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:pointer-events-none data-[state=open]:bg-accent data-[state=open]:text-muted-foreground">
+        <ModeToggle />
+      </div>
       <Button
         onClick={() => {
           signOut();

@@ -83,3 +83,20 @@ export type AuthSuccessResponse = {
   prefs: Date | string;
   accessedAt: Date | string;
 };
+
+type Server = {
+  id: string;
+  name: string;
+  imageUrl: string;
+};
+
+type Member = {
+  id: string;
+  username: string;
+  imageUrl: string;
+  role: string;
+};
+
+export type ServerWithMembersWithProfiles = Server & {
+  members: (Member & { profile: IUser })[];
+};
