@@ -164,7 +164,7 @@ export const createServer = async (server: INewServer) => {
 
     const newMember = await createMember({
       role: "creator",
-      serverid: newServer.$id,
+      servers: newServer.$id,
       userid: server.creatorid,
     }).then(
       (res) => {
@@ -187,7 +187,7 @@ export const createServer = async (server: INewServer) => {
   }
 };
 
-export const getUserServers = async (userid: string | undefined) => {
+export const getMembersWithServers = async (userid: string | undefined) => {
   const membership = await databases
     .listDocuments(
       appwriteConfig.databaseId,
@@ -204,6 +204,27 @@ export const getUserServers = async (userid: string | undefined) => {
       }
     );
   return membership;
+};
+
+export const getServersOfUser = async (userid: string | undefined) => {
+  const membership = await databases
+    .listDocuments(
+      appwriteConfig.databaseId,
+      appwriteConfig.membersCollectionId,
+      [Query.equal("userid", userid ? userid : "")]
+    )
+    .then(
+      (res) => {
+        return res;
+      },
+      (err) => {
+        console.log(err);
+        return err;
+      }
+    );
+  const servers = membership.documents.map((document) => document.servers);
+
+  return servers;
 };
 
 export const createMember = async (member: INewMember) => {
@@ -226,6 +247,8 @@ export const createMember = async (member: INewMember) => {
 
   return newMember;
 };
+
+export const getServerInfo = (serverId: string) => {};
 
 export const getFilePreview = (fileId: string) => {
   try {

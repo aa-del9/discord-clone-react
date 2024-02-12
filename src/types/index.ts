@@ -19,7 +19,7 @@ export type INewServer = {
   name: string;
   image: File;
   creatorid: string | undefined;
-  createdAt: Date | string;
+  createdAt: Date;
 };
 
 export type IContextType = {
@@ -67,31 +67,16 @@ export type INewUser = {
   year: number;
 };
 
-export type AuthSuccessResponse = {
+export type Server = {
   $id: string;
-  $createdAt: Date | string;
-  $updatedAt: Date | string;
-  name: string;
-  registration: string;
-  status: boolean;
-  labels: string[];
-  passwordUpdate: Date | string;
-  email: string;
-  phone: string;
-  emailVerification: boolean;
-  phoneVerification: boolean;
-  prefs: Date | string;
-  accessedAt: Date | string;
-};
-
-type Server = {
-  id: string;
   name: string;
   imageUrl: string;
+  inviteCode: string | null;
+  createdAt: Date | string;
 };
 
 type Member = {
-  id: string;
+  $id: string;
   username: string;
   imageUrl: string;
   role: string;
@@ -99,7 +84,7 @@ type Member = {
 export type INewMember = {
   role: string;
   userid: string | undefined;
-  serverid: string;
+  servers: string;
 };
 
 export type ServerWithMembersWithProfiles = Server & {

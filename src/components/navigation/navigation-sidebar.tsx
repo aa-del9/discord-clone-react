@@ -10,26 +10,20 @@ import { useSignOutAccount } from "@/lib/react-query/queriesAndMutations";
 import { useEffect, useState } from "react";
 import { INITIAL_USER } from "@/lib/constants/auth";
 import { ModeToggle } from "../ui/mode-toggle";
-import { getUserServers } from "@/lib/appwrite/api";
+import { getServersOfUser } from "@/lib/appwrite/api";
+import { Server } from "@/types";
 
 export const NavigationSidebar = () => {
   const { user, setIsAuthenticated, setUser } = useUserContext();
   const { mutate: signOut, isSuccess, isError } = useSignOutAccount();
   const navigate = useNavigate();
-  const [servers, setServers] = useState<any>([]);
+  const [servers, setServers] = useState<Server[]>([]);
   useEffect(() => {
-    getUserServers(user?.accountid ? user.accountid : "").then((res) => {
-      console.log(res.documents);
-      setServers(res.documents);
+    getServersOfUser(user?.accountid ? user.accountid : "").then((res) => {
+      console.log(res);
+      setServers(!(res === undefined) ? res : []);
     });
   }, []);
-  // const servers = [
-  //   {
-  //     id: "h9h9w8",
-  //     name: "server1",
-  //     imageUrl: "/assets/icons/discord.svg",
-  //   },
-  // ];
 
   if (!user) redirect("/login");
   useEffect(() => {
@@ -48,10 +42,10 @@ export const NavigationSidebar = () => {
       <ScrollArea className="flex-1 w-full">
         {servers.map((server) => (
           <NavigationItem
-            key={server.serverid.$id}
-            id={server.serverid.$id}
-            imageUrl={server.serverid.imageUrl}
-            name={server.serverid.name}
+            key={server.$id}
+            id={server.$id}
+            imageUrl={server.imageUrl}
+            name={server.name}
           />
         ))}
       </ScrollArea>

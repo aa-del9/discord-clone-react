@@ -11,6 +11,7 @@ interface NavigationItemProps {
 export const NavigationItem = ({ id, imageUrl, name }: NavigationItemProps) => {
   const params = useParams();
   const navigate = useNavigate();
+
   const onClick = () => {
     navigate(`/servers/${id}`);
   };
