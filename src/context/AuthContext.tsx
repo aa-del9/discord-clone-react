@@ -35,7 +35,7 @@ const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     } finally {
       setTimeout(() => {
         setIsLoading(false);
-      }, 1500);
+      }, 500);
     }
   };
 

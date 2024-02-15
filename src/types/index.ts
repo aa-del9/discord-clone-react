@@ -87,6 +87,7 @@ export type INewMember = {
   servers: string;
 };
 
-export type ServerWithMembersWithProfiles = Server & {
+export type ServerWithMembersWithProfiles = {
+  servers: Server;
   members: (Member & { profile: IUser })[];
 };

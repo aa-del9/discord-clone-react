@@ -1,6 +1,7 @@
-import { INewMember, INewServer, INewUser, IUserLogin } from "@/types";
+import { INewMember, INewServer, INewUser, IUserLogin, Server } from "@/types";
 import { account, appwriteConfig, databases, storage } from "./config";
 import { ID, Query } from "appwrite";
+import { v4 as uuidv4 } from "uuid";
 
 export const createUserAccount = async (user: INewUser) => {
   const newAccount = await account
@@ -142,6 +143,7 @@ export const createServer = async (server: INewServer) => {
           name: server.name,
           createdAt: new Date(),
           imageUrl: fileUrl,
+          inviteCode: uuidv4(),
         }
       )
       .then(
@@ -248,7 +250,34 @@ export const createMember = async (member: INewMember) => {
   return newMember;
 };
 
-export const getServerInfo = (serverId: string) => {};
+export const getServerInfoWithMembers = async (serverId: string) => {
+  const server = await databases
+    .getDocument(
+      appwriteConfig.databaseId,
+      appwriteConfig.serversCollectionId,
+      serverId
+    )
+    .then(
+      async (res) => {
+        const members = await databases
+          .listDocuments(
+            appwriteConfig.databaseId,
+            appwriteConfig.membersCollectionId,
+            [Query.equal("servers", serverId)]
+          )
+          .then((response) => ({
+            servers: { ...res },
+            members: { ...response.documents },
+          }));
+        return members;
+      },
+      (err) => {
+        console.log(err);
+        return err;
+      }
+    );
+  return server;
+};
 
 export const getFilePreview = (fileId: string) => {
   try {

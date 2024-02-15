@@ -22,6 +22,7 @@ const App = () => {
           <Route path="/app" element={<SplashScreen />} />
           <Route element={<RootLayout />}>
             <Route path="/servers/:serverId" element={<ServerIdLayout />} />
+            {/* <Route path="/invite/:inviteCode" element={<InvitePage />} /> */}
           </Route>
         </Route>
       </Routes>

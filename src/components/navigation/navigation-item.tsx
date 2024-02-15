@@ -13,7 +13,7 @@ export const NavigationItem = ({ id, imageUrl, name }: NavigationItemProps) => {
   const navigate = useNavigate();
 
   const onClick = () => {
-    navigate(`/servers/${id}`);
+    navigate(`/servers/${id}`, { state: { name } });
   };
   return (
     <ActionTooltip side="right" align="center" label={name}>
