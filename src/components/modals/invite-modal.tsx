@@ -41,7 +41,7 @@ export const InviteModal = () => {
             </Label>
             <div className="flex items-center mt-2 gap-x-2 bg-zinc-700 rounded-md">
               <Input
-                disabled={true}
+                disabled
                 className="bg-transparent border-transparent text-primary"
                 value={inviteUrl}
               />
