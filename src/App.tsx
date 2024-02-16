@@ -19,7 +19,7 @@ const App = () => {
         <Route element={<PrivateRoutes />}>
           <Route element={<RootLayout />}>
             <Route path="/servers/:serverId" element={<ServerIdLayout />} />
-            {/* <Route path="/invite/:inviteCode" element={<InvitePage />} /> */}
+            <Route path="/invite/:inviteCode" element="" />
           </Route>
         </Route>
       </Routes>

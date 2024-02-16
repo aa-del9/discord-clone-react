@@ -14,4 +14,6 @@ export const INITIAL_STATE = {
   setUser: () => {},
   setIsAuthenticated: () => {},
   checkAuthUser: async () => false as boolean,
+  isInvite: false,
+  setIsInvite: () => {},
 };

@@ -19,7 +19,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { ModeToggle } from "../../components/ui/mode-toggle";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { LoginVaidation } from "@/lib/validation";
 import Loader from "@/components/shared/Loader";
 import { useUserContext } from "@/hooks/use-user-context";
@@ -28,8 +28,10 @@ import { useState } from "react";
 import { cn } from "@/lib/utils";
 
 const LoginForm = () => {
+  const { checkAuthUser, isInvite } = useUserContext();
+  const location = useLocation();
+  const route = isInvite ? location.state : undefined;
   const navigate = useNavigate();
-  const { checkAuthUser } = useUserContext();
   const [error, setError] = useState<string>("");
   const form = useForm<z.infer<typeof LoginVaidation>>({
     resolver: zodResolver(LoginVaidation),
@@ -68,7 +70,9 @@ const LoginForm = () => {
     const isLoggedIn = await checkAuthUser();
     if (isLoggedIn) {
       form.reset();
-      navigate("/servers/@me");
+      console.log(isInvite);
+
+      !isInvite ? navigate("/servers/@me") : navigate(route);
     } else {
       return;
     }
