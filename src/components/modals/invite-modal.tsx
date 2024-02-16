@@ -5,7 +5,6 @@ import {
   Dialog,
 } from "@/components/ui/dialog";
 import { useModal } from "@/hooks/use-model-store";
-import { useUserContext } from "@/hooks/use-user-context";
 import { Label } from "../ui/label";
 import { Input } from "../ui/input";
 import { Button } from "../ui/button";
@@ -15,9 +14,7 @@ import { useState } from "react";
 export const InviteModal = () => {
   const { isOpen, onClose, data, type } = useModal();
   const { serverDetail } = data;
-  const { user } = useUserContext();
   const [isCopied, setIsCopied] = useState(false);
-  console.log(user);
   const isModalOpen = isOpen && type === "invite";
   const origin = useOrigin();
   const inviteUrl = origin + "/invite/" + serverDetail?.inviteCode;
