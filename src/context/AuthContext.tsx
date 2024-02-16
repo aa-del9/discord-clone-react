@@ -8,8 +8,9 @@ export const AuthContext = createContext<IContextType>(INITIAL_STATE);
 
 const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [user, setUser] = useState<IUser>(INITIAL_USER);
+  const [isInvite, setIsInvite] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState<boolean>(false);
-  const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
+  const [isAuthenticated, setIsAuthenticated] = useState<boolean>(true);
 
   const checkAuthUser = async () => {
     try {
@@ -30,6 +31,7 @@ const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       }
       return false;
     } catch (error) {
+      setIsAuthenticated(false);
       console.log(error);
       return false;
     } finally {
@@ -45,6 +47,8 @@ const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     setIsLoading,
     setIsAuthenticated,
     checkAuthUser,
+    isInvite,
+    setIsInvite,
   };
 
   useEffect(() => {

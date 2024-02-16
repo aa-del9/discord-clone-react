@@ -30,6 +30,8 @@ export type IContextType = {
   setIsLoading: React.Dispatch<React.SetStateAction<boolean>>;
   setIsAuthenticated: React.Dispatch<React.SetStateAction<boolean>>;
   checkAuthUser: () => Promise<boolean>;
+  isInvite: boolean;
+  setIsInvite: React.Dispatch<React.SetStateAction<boolean>>;
 };
 
 export type IUpdatePost = {
