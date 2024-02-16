@@ -68,7 +68,7 @@ const LoginForm = () => {
     const isLoggedIn = await checkAuthUser();
     if (isLoggedIn) {
       form.reset();
-      navigate("/app");
+      navigate("/servers/@me");
     } else {
       return;
     }

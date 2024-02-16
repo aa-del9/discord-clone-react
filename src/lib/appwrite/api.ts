@@ -266,7 +266,7 @@ export const getServerInfoWithMembers = async (serverId: string) => {
             [Query.equal("servers", serverId)]
           )
           .then((response) => ({
-            servers: { ...res },
+            server: { ...res },
             members: { ...response.documents },
           }));
         return members;

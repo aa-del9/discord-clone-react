@@ -88,6 +88,6 @@ export type INewMember = {
 };
 
 export type ServerWithMembersWithProfiles = {
-  servers: Server;
+  server: Server;
   members: (Member & { profile: IUser })[];
 };

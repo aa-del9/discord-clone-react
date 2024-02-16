@@ -6,7 +6,6 @@ import RegisterForm from "@/routes/auth/RegisterForm";
 import PrivateRoutes from "@/lib/utils/PrivateRoutes";
 import RootLayout from "@/routes/main/RootLayout";
 import ServerIdLayout from "./routes/main/servers/ServerIdLayout";
-import SplashScreen from "./routes/splashScreen";
 
 const App = () => {
   return (
@@ -18,8 +17,6 @@ const App = () => {
         </Route>
 
         <Route element={<PrivateRoutes />}>
-          {/* <Route index element={<RootLayout />} /> */}
-          <Route path="/app" element={<SplashScreen />} />
           <Route element={<RootLayout />}>
             <Route path="/servers/:serverId" element={<ServerIdLayout />} />
             {/* <Route path="/invite/:inviteCode" element={<InvitePage />} /> */}
