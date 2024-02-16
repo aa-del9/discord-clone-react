@@ -14,13 +14,13 @@ import { useState } from "react";
 
 export const InviteModal = () => {
   const { isOpen, onClose, data, type } = useModal();
-  const { servers } = data;
+  const { serverDetail } = data;
   const { user } = useUserContext();
   const [isCopied, setIsCopied] = useState(false);
   console.log(user);
   const isModalOpen = isOpen && type === "invite";
   const origin = useOrigin();
-  const inviteUrl = origin + "/invite/" + servers?.inviteCode;
+  const inviteUrl = origin + "/invite/" + serverDetail?.inviteCode;
 
   const onCopy = () => {
     setIsCopied(true);

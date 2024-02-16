@@ -1,6 +1,6 @@
 import { getCurrentUser } from "@/lib/appwrite/api";
 import { INITIAL_STATE, INITIAL_USER } from "@/lib/constants/auth";
-import SplashScreen from "@/routes/splashScreen";
+import SplashScreen from "@/components/splash-screen";
 import { IContextType, IUser } from "@/types";
 import { createContext, useEffect, useState } from "react";
 
@@ -33,9 +33,7 @@ const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       console.log(error);
       return false;
     } finally {
-      setTimeout(() => {
-        setIsLoading(false);
-      }, 500);
+      setIsLoading(false);
     }
   };
 

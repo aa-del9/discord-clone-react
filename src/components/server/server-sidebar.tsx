@@ -15,7 +15,7 @@ export const ServerSidebar = ({ serverId, role }: ServerSidebarProps) => {
 
   const [serverWithMembers, setServerWithMembers] =
     useState<ServerWithMembersWithProfiles>({
-      servers: {
+      server: {
         $id: "",
         name: state?.name,
         imageUrl: "",

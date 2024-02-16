@@ -86,7 +86,7 @@ const RegisterForm = () => {
 
     if (isLoggedIn) {
       form.reset();
-      navigate("/app");
+      navigate("/servers/@me");
     } else {
       return;
     }

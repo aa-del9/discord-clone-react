@@ -11,7 +11,7 @@ const AuthPage = () => {
     }
 
     if (isAuthenticated) {
-      navigate("/app");
+      navigate("/servers/@me");
     }
   }, []);
 
