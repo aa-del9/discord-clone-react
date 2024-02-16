@@ -46,6 +46,7 @@ export type IUpdatePost = {
 
 export type IUser =
   | {
+      $id: string;
       accountid: string;
       username: string;
       email: string;
@@ -77,10 +78,10 @@ export type Server = {
   createdAt: Date | string;
 };
 
-type Member = {
+export type Member = {
   $id: string;
   username: string;
-  imageUrl: string;
+  userid: IUser;
   role: string;
 };
 export type INewMember = {
@@ -91,5 +92,5 @@ export type INewMember = {
 
 export type ServerWithMembersWithProfiles = {
   server: Server;
-  members: (Member & { profile: IUser })[];
+  members: Member[];
 };

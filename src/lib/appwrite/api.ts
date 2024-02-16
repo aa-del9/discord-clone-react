@@ -308,3 +308,39 @@ export const deleteFile = async (fileId: string) => {
     console.log(error);
   }
 };
+
+export const getServerInfoFromInviteCode = async (inviteCode: string) => {
+  const server = await databases
+    .listDocuments(
+      appwriteConfig.databaseId,
+      appwriteConfig.serversCollectionId,
+      [Query.equal("inviteCode", inviteCode)]
+    )
+    .then(
+      (res) => {
+        console.log(res);
+        const result: Server = {
+          $id: res.documents[0].$id,
+          name: res.documents[0].name,
+          imageUrl: res.documents[0].imageUrl,
+          inviteCode: res.documents[0].inviteCode,
+          createdAt: res.documents[0].createdAt,
+        };
+        return result;
+      },
+      (err) => {
+        console.log(err);
+        const emptyServer: Server = {
+          $id: "",
+          name: "",
+          imageUrl: "",
+          inviteCode: "",
+          createdAt: "",
+        };
+        return emptyServer;
+      }
+    );
+  console.log(server);
+
+  return server;
+};

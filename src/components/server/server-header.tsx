@@ -19,13 +19,13 @@ import { ServerWithMembersWithProfiles } from "@/types";
 
 interface ServerHeaderProps {
   server: ServerWithMembersWithProfiles;
-  role: string;
+  role: string | undefined;
 }
 
 export const ServerHeader = ({ server, role }: ServerHeaderProps) => {
   const serverDetail = server.server;
   const { onOpen } = useModal();
-  const isAdmin = true;
+  const isAdmin = role === "creator";
   const isModerator = isAdmin || role === "moderator";
   console.log(serverDetail);
 
