@@ -8,7 +8,7 @@ import { useModal } from "@/hooks/use-model-store";
 import { useUserContext } from "@/hooks/use-user-context";
 import { Label } from "../ui/label";
 import { Button } from "../ui/button";
-import { createMember } from "@/lib/appwrite/api";
+import { checkIfMember, createMember } from "@/lib/appwrite/api";
 
 export const InvitePageModal = () => {
   const { isOpen, data, type } = useModal();
@@ -17,14 +17,28 @@ export const InvitePageModal = () => {
   const { user } = useUserContext();
 
   const acceptInvite = async () => {
-    await createMember({
-      role: "guest",
-      servers: serverDetail?.$id ? serverDetail?.$id : "",
-      userid: user?.accountid,
-    }).then(
+    await checkIfMember(
+      user?.accountid ? user?.accountid : "",
+      serverDetail?.$id ? serverDetail?.$id : ""
+    ).then(
       (res) => {
         console.log(res);
-        return res;
+
+        res !== undefined
+          ? console.log("Already a member")
+          : createMember({
+              role: "guest",
+              servers: serverDetail?.$id ? serverDetail?.$id : "",
+              userid: user?.accountid,
+            }).then(
+              (res) => {
+                console.log(res);
+                return res;
+              },
+              (err) => {
+                console.log(err);
+              }
+            );
       },
       (err) => {
         console.log(err);

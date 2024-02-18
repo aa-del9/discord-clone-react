@@ -25,8 +25,20 @@ export const InviteModal = () => {
     navigator.clipboard.writeText(inviteUrl);
   };
 
+  const selectText = () => {
+    console.log("selected");
+    const input = document.getElementById("inviteUrlInput") as HTMLInputElement;
+    input?.select();
+    input?.setSelectionRange(0, 99999);
+  };
+
+  const onModalClose = () => {
+    onClose();
+    setIsCopied(false);
+  };
+
   return (
-    <Dialog open={isModalOpen} onOpenChange={onClose}>
+    <Dialog open={isModalOpen} onOpenChange={onModalClose}>
       <DialogContent className="bg-white text-black p-0 overflow-hidden">
         <DialogHeader className="pt-8 px-6">
           <DialogTitle className="text-2xl text-center font-bold">
@@ -38,9 +50,11 @@ export const InviteModal = () => {
             </Label>
             <div className="flex items-center mt-2 gap-x-2 bg-zinc-700 rounded-md">
               <Input
-                disabled
-                className="bg-transparent border-transparent text-primary"
+                id="inviteUrlInput"
+                className="bg-transparent border-transparent text-primary focus-visible:ring-0 focus-visible:ring-offset-0"
                 value={inviteUrl}
+                readOnly
+                onClick={selectText}
               />
 
               <Button

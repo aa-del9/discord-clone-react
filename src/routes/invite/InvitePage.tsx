@@ -1,4 +1,3 @@
-import { InvitePageModal } from "@/components/modals/invite-page-modal";
 import { useModal } from "@/hooks/use-model-store";
 import { getServerInfoFromInviteCode } from "@/lib/appwrite/api";
 import { useEffect } from "react";
@@ -16,7 +15,7 @@ const InvitePage = () => {
     });
   }, []);
   return (
-    <div className="w-[100vw] h-[100vh] bg-[url('/assets/background.png')] bg-cover"></div>
+    <div className="w-[100vw] h-[100vh] bg-[url('/assets/background.png')] bg-cover" />
   );
 };
 
