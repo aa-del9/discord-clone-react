@@ -24,6 +24,8 @@ interface ServerHeaderProps {
 
 export const ServerHeader = ({ server, role }: ServerHeaderProps) => {
   const serverDetail = server.server;
+  console.log(serverDetail);
+
   const { onOpen } = useModal();
   const isAdmin = role === "creator";
   const isModerator = isAdmin || role === "moderator";

@@ -40,7 +40,7 @@ const FileUploader = ({ fieldChange, mediaUrl }: FileUploaderProps) => {
             <img
               src={fileUrl}
               alt="image"
-              className="file-uploader-img w-[150px] h-[150px] object-fill rounded-[50%]"
+              className="file-uploader-img w-[150px] h-[150px] object-cover rounded-[50%]"
             />
             <Trash className="relative right-0 h-4 w-4 " />
           </div>

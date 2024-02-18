@@ -1,4 +1,5 @@
 export const INITIAL_USER = {
+  $id: "",
   accountid: "",
   username: "",
   email: "",

@@ -338,7 +338,6 @@ export const getServerInfoFromInviteCode = async (inviteCode: string) => {
     )
     .then(
       (res) => {
-        console.log(res);
         const result: Server = {
           $id: res.documents[0].$id,
           name: res.documents[0].name,
@@ -361,6 +360,5 @@ export const getServerInfoFromInviteCode = async (inviteCode: string) => {
       }
     );
   console.log(server);
-
   return server;
 };
