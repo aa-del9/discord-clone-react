@@ -7,23 +7,15 @@ import { NavigationItem } from "./navigation-item";
 import DirectMessagesButton from "./direct-messages-button";
 import { Button } from "../ui/button";
 import { useSignOutAccount } from "@/lib/react-query/queriesAndMutations";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { INITIAL_USER } from "@/lib/constants/auth";
 import { ModeToggle } from "../ui/mode-toggle";
-import { getServersOfUser } from "@/lib/appwrite/api";
 import { Server } from "@/types";
 
-export const NavigationSidebar = () => {
+export const NavigationSidebar = ({ servers }: { servers: Server[] }) => {
   const { user, setIsAuthenticated, setUser } = useUserContext();
   const { mutate: signOut, isSuccess, isError } = useSignOutAccount();
   const navigate = useNavigate();
-  const [servers, setServers] = useState<Server[]>([]);
-  useEffect(() => {
-    getServersOfUser(user?.accountid ? user.accountid : "").then((res) => {
-      console.log(res);
-      setServers(!(res === undefined) ? res : []);
-    });
-  }, []);
 
   if (!user) redirect("/login");
   useEffect(() => {

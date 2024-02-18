@@ -250,6 +250,26 @@ export const createMember = async (member: INewMember) => {
   return newMember;
 };
 
+export const checkIfMember = async (userid: string, servers: string) => {
+  const member = await databases
+    .listDocuments(
+      appwriteConfig.databaseId,
+      appwriteConfig.membersCollectionId,
+      [Query.equal("userid", userid), Query.equal("servers", servers)]
+    )
+    .then(
+      (res) => {
+        console.log(res);
+        return res.documents[0];
+      },
+      (err) => {
+        console.log(err);
+        return err;
+      }
+    );
+  return member;
+};
+
 export const getServerInfoWithMembers = async (serverId: string) => {
   const server = await databases
     .getDocument(
@@ -318,7 +338,6 @@ export const getServerInfoFromInviteCode = async (inviteCode: string) => {
     )
     .then(
       (res) => {
-        console.log(res);
         const result: Server = {
           $id: res.documents[0].$id,
           name: res.documents[0].name,
@@ -341,6 +360,5 @@ export const getServerInfoFromInviteCode = async (inviteCode: string) => {
       }
     );
   console.log(server);
-
   return server;
 };

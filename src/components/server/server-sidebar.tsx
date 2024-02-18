@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { ServerHeader } from "./server-header";
 import { getServerInfoWithMembers } from "@/lib/appwrite/api";
-import { Member, ServerWithMembersWithProfiles } from "@/types";
+import { ServerWithMembersWithProfiles } from "@/types";
 import { useLocation } from "react-router-dom";
 import { useUserContext } from "@/hooks/use-user-context";
 
@@ -12,7 +12,6 @@ interface ServerSidebarProps {
 export const ServerSidebar = ({ serverId }: ServerSidebarProps) => {
   const { state } = useLocation();
   const { user } = useUserContext();
-  console.log(state);
   const [role, setRole] = useState<string>("guest");
   const [serverWithMembers, setServerWithMembers] =
     useState<ServerWithMembersWithProfiles>({
@@ -25,22 +24,30 @@ export const ServerSidebar = ({ serverId }: ServerSidebarProps) => {
       },
       members: [],
     });
-  console.log(serverWithMembers, role);
-
+  console.log(serverWithMembers, "Role=" + role);
+  const fetchData = async () => {
+    const res = await getServerInfoWithMembers(serverId ? serverId : "");
+    console.log(res);
+    setServerWithMembers(res);
+    console.log(serverWithMembers);
+  };
   useEffect(() => {
-    console.log(serverId);
-    const res =
-      serverId !== "@me"
-        ? getServerInfoWithMembers(serverId ? serverId : "").then(
-            (response) => {
-              console.log(response);
-              setServerWithMembers(response);
-              console.log(serverWithMembers);
-            }
-          )
-        : undefined;
+    const res = serverId !== "@me" ? fetchData() : undefined;
     console.log(res);
   }, [serverId]);
+
+  useEffect(() => {
+    setServerWithMembers({
+      server: {
+        $id: "",
+        name: state?.name,
+        imageUrl: "",
+        inviteCode: "",
+        createdAt: "",
+      },
+      members: [],
+    });
+  }, [state]);
 
   useEffect(() => {
     for (let member in serverWithMembers.members) {

@@ -53,8 +53,6 @@ const formSchema = z.object({
 export const CreateServerModal = () => {
   const navigate = useNavigate();
   const { user } = useUserContext();
-  console.log(user);
-
   const [error, setError] = useState<string>("");
   const { isOpen, onClose, type } = useModal();
 
@@ -84,6 +82,7 @@ export const CreateServerModal = () => {
     }
     form.reset();
     navigate("/servers/" + server.$id);
+    window.location.reload();
     console.log(server);
   };
 
