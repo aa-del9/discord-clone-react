@@ -89,8 +89,8 @@ export const InvitePageModal = () => {
                 <DialogTitle className="text-lg text-center font-bold text-primary/">
                   Server joined
                 </DialogTitle>
-                <Label className="text-md font-thin dark:text-primary/70">
-                  we have beamed the info to your Discord app. You can continue
+                <Label className="text-md font-thin text-center w-[360px] dark:text-primary/70">
+                  We have beamed the info to your Discord app. You can continue
                   to your server
                 </Label>
               </>
