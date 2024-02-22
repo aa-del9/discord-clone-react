@@ -22,10 +22,6 @@ export const LeaveServerModal = () => {
     onClose();
   };
 
-  const redirectToServer = () => {
-    onClose();
-  };
-
   return (
     <Dialog open={isModalOpen}>
       <DialogContent className="bg-background text-primary p-0 overflow-hidden">
@@ -50,7 +46,9 @@ export const LeaveServerModal = () => {
               <Button
                 className=" h-7 mx-2 ring-offset-none focus-visible:ring-0 focus-visible:ring-offset-0"
                 variant="destructive"
-                onClick={redirectToServer}
+                onClick={() => {
+                  onClose();
+                }}
               >
                 No
               </Button>
