@@ -15,14 +15,21 @@ import {
   DropdownMenuTrigger,
 } from "../ui/dropdown-menu";
 import { useModal } from "@/hooks/use-model-store";
-import { ServerWithMembersWithProfiles } from "@/types";
+import { Member, ServerWithMembersWithProfiles } from "@/types";
 
 interface ServerHeaderProps {
   server: ServerWithMembersWithProfiles;
   role: string | undefined;
+  thisMember: Member;
 }
 
-export const ServerHeader = ({ server, role }: ServerHeaderProps) => {
+export const ServerHeader = ({
+  server,
+  role,
+  thisMember,
+}: ServerHeaderProps) => {
+  console.log(thisMember);
+
   const serverDetail = server.server;
   console.log(serverDetail);
 
@@ -75,7 +82,12 @@ export const ServerHeader = ({ server, role }: ServerHeaderProps) => {
           </DropdownMenuItem>
         )}
         {!isAdmin && (
-          <DropdownMenuItem className="text-rose-500 px-3 py-2 text-sm cursor-pointer">
+          <DropdownMenuItem
+            className="text-rose-500 px-3 py-2 text-sm cursor-pointer"
+            onClick={() => {
+              onOpen("leaveServer", { thisMember });
+            }}
+          >
             Leave Server
             <LogOut className="h-4 w-4 ml-auto" />
           </DropdownMenuItem>

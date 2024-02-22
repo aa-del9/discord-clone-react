@@ -1,10 +1,15 @@
-import { Server } from "@/types";
+import { Member, Server } from "@/types";
 import { create } from "zustand";
 
-export type ModalType = "createServer" | "invite" | "invitation";
+export type ModalType =
+  | "createServer"
+  | "invite"
+  | "invitation"
+  | "leaveServer";
 
 interface ModalData {
   serverDetail?: Server;
+  thisMember?: Member;
 }
 
 interface ModalStore {
