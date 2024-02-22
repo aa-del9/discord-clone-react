@@ -329,6 +329,20 @@ export const deleteFile = async (fileId: string) => {
   }
 };
 
+export const leaveServer = async (memberID: string) => {
+  try {
+    const res = await databases.deleteDocument(
+      appwriteConfig.databaseId,
+      appwriteConfig.membersCollectionId,
+      memberID
+    );
+    return res;
+  } catch (error) {
+    console.log(error);
+    return error;
+  }
+};
+
 export const getServerInfoFromInviteCode = async (inviteCode: string) => {
   const server = await databases
     .listDocuments(

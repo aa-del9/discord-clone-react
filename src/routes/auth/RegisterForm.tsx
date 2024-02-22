@@ -69,7 +69,7 @@ const RegisterForm = () => {
     console.log(values);
     const newUser = await createUserAccount(values);
     console.log(newUser);
-    if (!newUser) {
+    if (!newUser.$id) {
       return;
     }
 

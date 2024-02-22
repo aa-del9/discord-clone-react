@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { ServerHeader } from "./server-header";
 import { getServerInfoWithMembers } from "@/lib/appwrite/api";
-import { ServerWithMembersWithProfiles } from "@/types";
+import { Member, ServerWithMembersWithProfiles } from "@/types";
 import { useLocation } from "react-router-dom";
 import { useUserContext } from "@/hooks/use-user-context";
 
@@ -13,6 +13,12 @@ export const ServerSidebar = ({ serverId }: ServerSidebarProps) => {
   const { state } = useLocation();
   const { user } = useUserContext();
   const [role, setRole] = useState<string>("guest");
+  const [thisMember, setThisMember] = useState<Member>({
+    $id: "",
+    username: "",
+    userid: user,
+    role: "",
+  });
   const [serverWithMembers, setServerWithMembers] =
     useState<ServerWithMembersWithProfiles>({
       server: {
@@ -59,12 +65,17 @@ export const ServerSidebar = ({ serverId }: ServerSidebarProps) => {
 
       serverWithMembers.members[member].userid?.$id === user?.accountid &&
         setRole(serverWithMembers.members[member].role);
+      setThisMember(serverWithMembers.members[member]);
     }
   }, [serverWithMembers]);
   return (
     <div className="flex flex-col h-full text-primary w-full dark:bg-[#2B2D32] bg-[#F2F3F5]">
       {serverId !== "@me" && (
-        <ServerHeader server={serverWithMembers} role={role} />
+        <ServerHeader
+          server={serverWithMembers}
+          role={role}
+          thisMember={thisMember}
+        />
       )}
     </div>
   );
