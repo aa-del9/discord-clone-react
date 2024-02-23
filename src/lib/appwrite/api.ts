@@ -274,7 +274,10 @@ export const getServersOfUser = async (userid: string | undefined) => {
     .listDocuments(
       appwriteConfig.databaseId,
       appwriteConfig.membersCollectionId,
-      [Query.equal("userid", userid ? userid : "")]
+      [
+        Query.equal("userid", userid ? userid : ""),
+        Query.equal("hasLeaved", false),
+      ]
     )
     .then(
       (res) => {
@@ -412,10 +415,13 @@ export const deleteFile = async (fileId: string) => {
 
 export const leaveServer = async (memberID: string) => {
   try {
-    const res = await databases.deleteDocument(
+    const res = await databases.updateDocument(
       appwriteConfig.databaseId,
       appwriteConfig.membersCollectionId,
-      memberID
+      memberID,
+      {
+        hasLeaved: true,
+      }
     );
     return res;
   } catch (error) {
