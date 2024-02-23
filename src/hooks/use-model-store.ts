@@ -5,7 +5,8 @@ export type ModalType =
   | "createServer"
   | "invite"
   | "invitation"
-  | "leaveServer";
+  | "leaveServer"
+  | "serverSettings";
 
 interface ModalData {
   serverDetail?: Server;

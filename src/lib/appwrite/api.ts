@@ -121,48 +121,38 @@ export const uploadFile = async (file: File) => {
 
 export const createServer = async (server: INewServer) => {
   try {
+    console.log(server);
+
     const uploadedFile = await uploadFile(server.image);
 
     if (!uploadedFile) throw Error;
 
-    const fileUrl = getFilePreview(uploadedFile.$id);
-
+    const fileUrl = await getFilePreview(uploadedFile.$id);
+    console.log(fileUrl);
     if (!fileUrl) {
       await deleteFile(uploadedFile.$id);
       throw Error;
     }
-    console.log(fileUrl);
 
-    const newServer = await databases
-      .createDocument(
-        appwriteConfig.databaseId,
-        appwriteConfig.serversCollectionId,
-        ID.unique(),
-        {
-          creatorid: server.creatorid,
-          name: server.name,
-          createdAt: new Date(),
-          imageUrl: fileUrl,
-          inviteCode: uuidv4(),
-        }
-      )
-      .then(
-        (res) => {
-          return res;
-        },
-        (err) => {
-          console.log(err);
-          return err;
-        }
-      );
-    console.log(newServer);
-
-    if (!newServer) {
+    const newServer = await databases.createDocument(
+      appwriteConfig.databaseId,
+      appwriteConfig.serversCollectionId,
+      ID.unique(),
+      {
+        creatorid: server.creatorid,
+        name: server.name,
+        createdAt: new Date(),
+        imageUrl: fileUrl,
+        inviteCode: uuidv4(),
+      }
+    );
+    if (!newServer.$id) {
       await deleteFile(uploadedFile.$id);
       console.log("newServer error", newServer);
 
       throw Error;
     }
+    console.log(newServer);
 
     const newMember = await createMember({
       role: "creator",
@@ -185,7 +175,78 @@ export const createServer = async (server: INewServer) => {
 
     return newServer;
   } catch (error) {
-    return error;
+    console.log(error);
+
+    // return error;
+  }
+};
+
+export const editServer = async (server: {
+  name: string;
+  image: File;
+  serverid: string;
+  oldImageUrl: string;
+}) => {
+  try {
+    if (server.image) {
+      console.log(server);
+      if (server.image && server.image.name === "imageIsUnchanged.jpg") {
+        const updatedServer = await databases.updateDocument(
+          appwriteConfig.databaseId,
+          appwriteConfig.serversCollectionId,
+          server.serverid,
+          {
+            name: server.name,
+          }
+        );
+        return updatedServer;
+      }
+      const uploadedFile = await uploadFile(server.image);
+      if (!uploadedFile) throw Error;
+
+      const fileUrl = await getFilePreview(uploadedFile.$id);
+      console.log(fileUrl);
+      if (!fileUrl) {
+        await deleteFile(uploadedFile.$id);
+        throw Error;
+      }
+
+      const updatedServer = await databases.updateDocument(
+        appwriteConfig.databaseId,
+        appwriteConfig.serversCollectionId,
+        server.serverid,
+        {
+          name: server.name,
+          imageUrl: fileUrl,
+        }
+      );
+
+      if (server.oldImageUrl) {
+        const url = new URL(server.oldImageUrl);
+        console.log(server.oldImageUrl, url);
+        const urlParts = url.pathname.split("/");
+        const oldImageId = urlParts[urlParts.indexOf("files") + 1];
+        console.log(oldImageId);
+
+        if (updatedServer.$id) {
+          const res = await deleteFile(oldImageId);
+          console.log("old image deletion?", res?.status);
+        }
+      }
+      return updatedServer;
+    } else {
+      const updatedServer = await databases.updateDocument(
+        appwriteConfig.databaseId,
+        appwriteConfig.serversCollectionId,
+        server.serverid,
+        {
+          name: server.name,
+        }
+      );
+      return updatedServer;
+    }
+  } catch (error) {
+    console.log(error);
   }
 };
 
@@ -217,6 +278,8 @@ export const getServersOfUser = async (userid: string | undefined) => {
     )
     .then(
       (res) => {
+        console.log(res);
+
         return res;
       },
       (err) => {
@@ -224,7 +287,10 @@ export const getServersOfUser = async (userid: string | undefined) => {
         return err;
       }
     );
+  console.log(membership);
+
   const servers = membership.documents.map((document) => document.servers);
+  console.log(servers);
 
   return servers;
 };
@@ -299,9 +365,9 @@ export const getServerInfoWithMembers = async (serverId: string) => {
   return server;
 };
 
-export const getFilePreview = (fileId: string) => {
+export const getFilePreview = async (fileId: string) => {
   try {
-    const fileUrl = storage.getFilePreview(
+    const fileUrl = await storage.getFilePreview(
       appwriteConfig.storageId,
       fileId,
       2000,
@@ -316,6 +382,21 @@ export const getFilePreview = (fileId: string) => {
   } catch (error) {
     console.log(error);
     return Error;
+  }
+};
+
+export const getFileDownload = async (fileId: string) => {
+  try {
+    const fileUrl = await storage.getFileDownload(
+      appwriteConfig.storageId,
+      fileId
+    );
+
+    if (!fileUrl) throw Error;
+
+    return fileUrl;
+  } catch (error) {
+    console.log(error);
   }
 };
 
