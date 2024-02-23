@@ -20,6 +20,7 @@ export const LeaveServerModal = () => {
     console.log(response);
     navigate("/servers/@me");
     onClose();
+    window.location.reload();
   };
 
   return (
