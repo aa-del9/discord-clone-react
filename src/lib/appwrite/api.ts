@@ -327,9 +327,16 @@ export const checkIfMember = async (userid: string, servers: string) => {
       [Query.equal("userid", userid), Query.equal("servers", servers)]
     )
     .then(
-      (res) => {
+      async (res) => {
         console.log(res);
-        return res.documents[0];
+        if (res.documents[0] === undefined) {
+          return res.documents[0];
+        } else {
+          if (res.documents[0].hasLeaved === true) {
+            await rejoinServer(res.documents[0].$id);
+          }
+          return res.documents[0];
+        }
       },
       (err) => {
         console.log(err);
@@ -337,6 +344,23 @@ export const checkIfMember = async (userid: string, servers: string) => {
       }
     );
   return member;
+};
+
+export const rejoinServer = async (memberID: string) => {
+  try {
+    const res = await databases.updateDocument(
+      appwriteConfig.databaseId,
+      appwriteConfig.membersCollectionId,
+      memberID,
+      {
+        hasLeaved: false,
+      }
+    );
+    return res;
+  } catch (error) {
+    console.log(error);
+    return error;
+  }
 };
 
 export const getServerInfoWithMembers = async (serverId: string) => {
