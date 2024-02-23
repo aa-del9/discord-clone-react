@@ -25,13 +25,6 @@ export const InviteModal = () => {
     navigator.clipboard.writeText(inviteUrl);
   };
 
-  const selectText = () => {
-    console.log("selected");
-    const input = document.getElementById("inviteUrlInput") as HTMLInputElement;
-    input?.select();
-    input?.setSelectionRange(0, 99999);
-  };
-
   const onModalClose = () => {
     onClose();
     setIsCopied(false);
@@ -54,7 +47,6 @@ export const InviteModal = () => {
                 className="bg-transparent border-transparent text-primary focus-visible:ring-0 focus-visible:ring-offset-0"
                 value={inviteUrl}
                 readOnly
-                onClick={selectText}
               />
 
               <Button

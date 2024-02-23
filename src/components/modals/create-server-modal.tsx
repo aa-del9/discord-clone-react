@@ -76,7 +76,9 @@ export const CreateServerModal = () => {
       creatorid: user?.accountid,
       createdAt: new Date(),
     });
-    if (!server.$id) {
+    console.log(server);
+
+    if (!server?.$id) {
       setError("Something went wrong.");
       return;
     }
