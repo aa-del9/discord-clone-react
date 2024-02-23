@@ -15,8 +15,8 @@ export const LeaveServerModal = () => {
   console.log(thisMember);
 
   const isModalOpen = isOpen && type === "leaveServer";
-  const callLeaveServer = () => {
-    const response = leaveServer(thisMember?.$id ? thisMember?.$id : "");
+  const callLeaveServer = async () => {
+    const response = await leaveServer(thisMember?.$id ? thisMember?.$id : "");
     console.log(response);
     navigate("/servers/@me");
     onClose();
