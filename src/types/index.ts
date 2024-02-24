@@ -83,6 +83,7 @@ export type Member = {
   username: string;
   userid: IUser;
   role: string;
+  servers?: Server;
 };
 export type INewMember = {
   role: string;
