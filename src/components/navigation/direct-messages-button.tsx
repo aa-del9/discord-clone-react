@@ -22,7 +22,7 @@ const DirectMessagesButton = () => {
         />
         <div
           className={cn(
-            "relative group flex justify-center items-center mx-3 h-[48px] w-[48px] rounded-[24px] bg-background group-hover:rounded-[16px] group-hover:bg-indigo-500 transition-all overflow-hidden",
+            "relative group flex justify-center items-center mx-3 h-[48px] w-[48px] rounded-[24px] bg-zinc-500 dark:bg-background group-hover:rounded-[16px] group-hover:bg-indigo-500 transition-all overflow-hidden",
             params?.serverId === "@me" &&
               "bg-primary/10 text-primary rounded-[16px] bg-indigo-500"
           )}

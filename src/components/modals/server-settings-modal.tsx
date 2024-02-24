@@ -23,10 +23,9 @@ import { Button } from "@/components/ui/button";
 import { useModal } from "@/hooks/use-model-store";
 import FileUploader from "../shared/FileUploader";
 import { useUserContext } from "@/hooks/use-user-context";
-import { createServer } from "@/lib/appwrite/api";
-import { useState } from "react";
-import { useNavigate } from "react-router-dom";
-import Loader from "../../components/shared/Loader";
+import { editServer } from "@/lib/appwrite/api";
+import { useEffect, useState } from "react";
+import Loader from "../shared/Loader";
 
 const MAX_FILE_SIZE = 5000000;
 const ACCEPTED_IMAGE_TYPES = [
@@ -51,13 +50,13 @@ const formSchema = z.object({
   ),
 });
 
-export const CreateServerModal = () => {
-  const navigate = useNavigate();
+export const ServerSettingsModal = () => {
   const { user } = useUserContext();
   const [error, setError] = useState<string>("");
-  const { isOpen, onClose, type } = useModal();
+  const { isOpen, onClose, type, data } = useModal();
+  const { serverDetail } = data;
 
-  const isModalOpen = isOpen && type === "createServer";
+  const isModalOpen = isOpen && type === "serverSettings";
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -70,29 +69,48 @@ export const CreateServerModal = () => {
   const isLoading = form.formState.isSubmitting;
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
-    console.log(values, user);
-    const server = await createServer({
+    console.log(values);
+    const editedServer = await editServer({
       name: values.name,
       image: values.image[0],
-      creatorid: user?.accountid,
-      createdAt: new Date(),
+      serverid: serverDetail?.$id ? serverDetail.$id : "",
+      oldImageUrl: serverDetail?.imageUrl ? serverDetail.imageUrl : "",
     });
-    console.log(server);
 
-    if (!server?.$id) {
+    if (!editedServer?.$id) {
       setError("Something went wrong.");
       return;
     }
-    form.reset();
-    navigate("/servers/" + server.$id);
+    console.log(editedServer);
+
     window.location.reload();
-    console.log(server);
   };
 
   const handleClose = () => {
     form.reset();
     onClose();
   };
+
+  const getImage = (imageUrl: string) => {
+    console.log(imageUrl);
+    fetch(imageUrl)
+      .then((res) => res.blob())
+      .then((blob) => {
+        const file = new File([blob], "imageIsUnchanged.jpg", {
+          type: "image/jpeg",
+        });
+        console.log(file);
+        form.setValue("image", [file]);
+        console.log(form.getValues("image"));
+      });
+  };
+
+  useEffect(() => {
+    if (serverDetail) {
+      form.setValue("name", serverDetail.name);
+      serverDetail.imageUrl && getImage(serverDetail.imageUrl);
+    }
+  }, [serverDetail, form]);
 
   return (
     <Dialog open={isModalOpen} onOpenChange={handleClose}>
@@ -117,7 +135,9 @@ export const CreateServerModal = () => {
                     <FormItem>
                       <FormControl>
                         <FileUploader
-                          mediaUrl=""
+                          mediaUrl={
+                            serverDetail?.imageUrl ? serverDetail.imageUrl : ""
+                          }
                           fieldChange={field.onChange}
                         />
                       </FormControl>
@@ -131,13 +151,13 @@ export const CreateServerModal = () => {
                 name="name"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel className="uppercase text-xs font-bold text-zinc-500 dark:text-primary/70">
+                    <FormLabel className="uppercase text-xs font-bold text-zinc-500 dark:text-primary/60">
                       Server name
                     </FormLabel>
                     <FormControl>
                       <Input
                         disabled={isLoading}
-                        className="bg-zinc-300/50 dark:bg-background border-0 focus-visible:ring-0 text-primary focus-visible:ring-offset-0"
+                        className="bg-zinc-300/50 dark:bg-zinc-700 border-0 focus-visible:ring-0 text-primary focus-visible:ring-offset-0"
                         placeholder="Enter server name"
                         {...field}
                       />
@@ -147,14 +167,14 @@ export const CreateServerModal = () => {
                 )}
               />
             </div>
-            <DialogFooter className="px-6 py-4">
+            <DialogFooter className="bg-gray-100 dark:bg-[#1E1F22] px-6 py-4">
               <Button type="submit" variant="default" disabled={isLoading}>
                 {isLoading ? (
                   <div className="flex gap-2">
-                    <Loader /> Creating...
+                    <Loader /> Updating...
                   </div>
                 ) : (
-                  "Create"
+                  "Update"
                 )}
               </Button>
             </DialogFooter>

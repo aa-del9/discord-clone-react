@@ -11,8 +11,10 @@ import { Button } from "../ui/button";
 import { checkIfMember, createMember } from "@/lib/appwrite/api";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import Loader from "../shared/Loader";
 
 export const InvitePageModal = () => {
+  const [isLoading, setIsLoading] = useState<boolean>(false);
   const navigate = useNavigate();
   const { isOpen, data, type, onClose } = useModal();
   const { serverDetail } = data;
@@ -20,6 +22,7 @@ export const InvitePageModal = () => {
   const { user } = useUserContext();
   const [isJoined, setIsJoined] = useState<boolean>(false);
   const acceptInvite = async () => {
+    setIsLoading(true);
     await checkIfMember(
       user?.accountid ? user?.accountid : "",
       serverDetail?.$id ? serverDetail?.$id : ""
@@ -43,6 +46,7 @@ export const InvitePageModal = () => {
               }
             );
         setIsJoined(true);
+        setIsLoading(false);
       },
       (err) => {
         console.log(err);
@@ -100,11 +104,22 @@ export const InvitePageModal = () => {
           <div className="pt-3 pb-8">
             <div className="flex justify-center mt-2 gap-x-20 rounded-md ">
               <Button
-                className=" h-7 mx-2 ring-offset-none focus-visible:ring-0 focus-visible:ring-offset-0"
+                className=" min-w-20 h-10 ring-offset-none focus-visible:ring-0 focus-visible:ring-offset-0"
                 variant="indigo"
+                disabled={isLoading}
                 onClick={!isJoined ? acceptInvite : redirectToServer}
               >
-                {!isJoined ? "Accept" : "Continue to Discord"}
+                {!isLoading ? (
+                  !isJoined ? (
+                    "Accept"
+                  ) : (
+                    "Continue to Discord"
+                  )
+                ) : (
+                  <div className="flex gap-2">
+                    <Loader color="white" /> Please wait...
+                  </div>
+                )}
               </Button>
             </div>
           </div>

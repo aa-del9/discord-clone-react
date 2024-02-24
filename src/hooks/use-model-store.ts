@@ -5,11 +5,13 @@ export type ModalType =
   | "createServer"
   | "invite"
   | "invitation"
-  | "leaveServer";
+  | "leaveServer"
+  | "serverSettings"
+  | "kickMember";
 
 interface ModalData {
   serverDetail?: Server;
-  thisMember?: Member;
+  member?: Member;
 }
 
 interface ModalStore {

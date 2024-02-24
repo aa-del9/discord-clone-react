@@ -83,6 +83,7 @@ export type Member = {
   username: string;
   userid: IUser;
   role: string;
+  servers?: Server;
 };
 export type INewMember = {
   role: string;
@@ -93,4 +94,5 @@ export type INewMember = {
 export type ServerWithMembersWithProfiles = {
   server: Server;
   members: Member[];
+  totalMembers: number;
 };

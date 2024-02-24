@@ -434,7 +434,7 @@ const RegisterForm = () => {
             >
               {isCreatingUser ? (
                 <div className="flex gap-2">
-                  <Loader /> Loading...
+                  <Loader color="white" /> Loading...
                 </div>
               ) : (
                 "Continue"
