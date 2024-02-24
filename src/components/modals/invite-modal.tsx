@@ -32,19 +32,19 @@ export const InviteModal = () => {
 
   return (
     <Dialog open={isModalOpen} onOpenChange={onModalClose}>
-      <DialogContent className="bg-white text-black p-0 overflow-hidden">
+      <DialogContent className="bg-white text-primary dark:bg-[#1E1F22] dark:text-primary/80 p-0 overflow-hidden">
         <DialogHeader className="pt-8 px-6">
           <DialogTitle className="text-2xl text-center font-bold">
             Invite friends to server
           </DialogTitle>
           <div className="p-6">
-            <Label className="uppercase text-xs font-bold text-zinc-500 dark:text-secondary/70">
+            <Label className="uppercase text-xs font-bold text-primary dark:text-primary/70">
               Server Invite Link
             </Label>
             <div className="flex items-center mt-2 gap-x-2 bg-zinc-700 rounded-md">
               <Input
                 id="inviteUrlInput"
-                className="bg-transparent border-transparent text-primary focus-visible:ring-0 focus-visible:ring-offset-0"
+                className="bg-transparent border-transparent text-white dark:text-primary focus-visible:ring-0 focus-visible:ring-offset-0"
                 value={inviteUrl}
                 readOnly
               />

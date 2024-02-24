@@ -35,7 +35,7 @@ export const KickMemberModal = () => {
           <DialogTitle className="text-[18px] px-0 font-bold pb-2">
             Kick @{member?.userid?.displayName} from the server
           </DialogTitle>
-          <div className="">
+          <div>
             <Label className="text-sm text-zinc-500 dark:text-primary/70">
               Are you sure you want to kick {member?.userid?.displayName} from
               the server? They will be able to join with a new invite link.

@@ -3,11 +3,13 @@ import {
   DialogContent,
   DialogTitle,
   Dialog,
+  DialogFooter,
 } from "@/components/ui/dialog";
 import { useModal } from "@/hooks/use-model-store";
 import { Button } from "../ui/button";
 import { useNavigate } from "react-router-dom";
 import { leaveServer } from "@/lib/appwrite/api";
+import { Label } from "@radix-ui/react-label";
 export const LeaveServerModal = () => {
   const navigate = useNavigate();
   const { isOpen, data, type, onClose } = useModal();
@@ -24,38 +26,39 @@ export const LeaveServerModal = () => {
   };
 
   return (
-    <Dialog open={isModalOpen}>
-      <DialogContent className="bg-background text-primary p-0 overflow-hidden">
-        <DialogHeader className="pt-8 px-6">
-          <div className="flex flex-col items-center gap-y-6">
-            <>
-              <DialogTitle className="text-md text-center font-thin text-primary">
-                Are you sure! you want to leave the server
-              </DialogTitle>
-            </>
-          </div>
-
-          <div className="pt-3 pb-8">
-            <div className="flex justify-center mt-2 gap-x-20 rounded-md ">
-              <Button
-                className=" h-7 mx-2 ring-offset-none focus-visible:ring-0 focus-visible:ring-offset-0"
-                variant="indigo"
-                onClick={callLeaveServer}
-              >
-                Yes
-              </Button>
-              <Button
-                className=" h-7 mx-2 ring-offset-none focus-visible:ring-0 focus-visible:ring-offset-0"
-                variant="destructive"
-                onClick={() => {
-                  onClose();
-                }}
-              >
-                No
-              </Button>
-            </div>
+    <Dialog open={isModalOpen} onOpenChange={onClose}>
+      <DialogContent className="bg-white text-primary dark:bg-[#1E1F22] p-0 overflow-hidden">
+        <DialogHeader className="p-5">
+          <DialogTitle className="text-[18px] px-0 font-bold pb-2">
+            Leave '{}'
+          </DialogTitle>
+          <div>
+            <Label className="text-sm text-zinc-500 dark:text-primary/70">
+              Are you sure you want to leave {}? You won't be able to join this
+              server unless you are re-invited.
+            </Label>
           </div>
         </DialogHeader>
+        <DialogFooter className="right-0 down-0">
+          <div className="flex w-full justify-end h-16 items-center mt-2 gap-x-2 bg-zinc-800">
+            <Button
+              className="w-20 h-10 hover:underline hover:underline-offset-2"
+              variant="text"
+              onClick={() => {
+                onClose();
+              }}
+            >
+              No
+            </Button>
+            <Button
+              className="w-20 h-10 mr-8"
+              variant="destructive"
+              onClick={callLeaveServer}
+            >
+              Yes
+            </Button>
+          </div>
+        </DialogFooter>
       </DialogContent>
     </Dialog>
   );
