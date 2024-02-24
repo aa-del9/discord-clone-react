@@ -5,6 +5,7 @@ import { InvitePageModal } from "../modals/invite-page-modal";
 import { LeaveServerModal } from "../modals/leave-server-modal";
 import { ServerSettingsModal } from "../modals/server-settings-modal";
 import { KickMemberModal } from "../modals/kick-member-modal";
+import { CreateChannelModal } from "../modals/create-channel-modal";
 
 export const ModalProvider = () => {
   const [isMounted, setIsMounted] = useState(false);
@@ -25,6 +26,7 @@ export const ModalProvider = () => {
       <LeaveServerModal />
       <ServerSettingsModal />
       <KickMemberModal />
+      <CreateChannelModal />
     </>
   );
 };
