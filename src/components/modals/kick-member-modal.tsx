@@ -1,3 +1,4 @@
+import { useState } from "react";
 import {
   DialogHeader,
   DialogContent,
@@ -9,7 +10,9 @@ import { useModal } from "@/hooks/use-model-store";
 import { Label } from "../ui/label";
 import { Button } from "../ui/button";
 import { leaveServer } from "@/lib/appwrite/api";
+import Loader from "../shared/Loader";
 export const KickMemberModal = () => {
+  const [isLoading, setLoading] = useState<boolean>(false);
   const { isOpen, onClose, data, type } = useModal();
   const { member } = data;
   const isModalOpen = isOpen && type === "kickMember";
@@ -19,12 +22,15 @@ export const KickMemberModal = () => {
   };
 
   const kickMember = async () => {
+    setLoading(true);
     const res = await leaveServer(member?.$id ? member?.$id : "");
     console.log(res);
     if (res.$id) {
       onModalClose();
+      setLoading(false);
       return;
     }
+    setLoading(false);
     console.log("error");
   };
 
@@ -43,7 +49,7 @@ export const KickMemberModal = () => {
           </div>
         </DialogHeader>
         <DialogFooter className="right-0 down-0">
-          <div className="flex w-full justify-end h-16 items-center mt-2 gap-x-2 bg-zinc-800">
+          <div className="flex w-full justify-end h-16 items-center mt-2 gap-x-2 bg-zinc-200 dark:bg-zinc-800">
             <Button
               onClick={onModalClose}
               className="w-20 h-10 hover:underline hover:underline-offset-2"
@@ -53,10 +59,16 @@ export const KickMemberModal = () => {
             </Button>
             <Button
               onClick={kickMember}
-              className="w-20 h-10 mr-8"
+              className=" min-w-20 h-10 mr-8"
               variant="destructive"
             >
-              Kick
+              {isLoading ? (
+                <div className="flex gap-2">
+                  <Loader color="white" /> Kicking...
+                </div>
+              ) : (
+                "Kick"
+              )}
             </Button>
           </div>
         </DialogFooter>

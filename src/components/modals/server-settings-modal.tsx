@@ -25,6 +25,7 @@ import FileUploader from "../shared/FileUploader";
 import { useUserContext } from "@/hooks/use-user-context";
 import { editServer } from "@/lib/appwrite/api";
 import { useEffect, useState } from "react";
+import Loader from "../shared/Loader";
 
 const MAX_FILE_SIZE = 5000000;
 const ACCEPTED_IMAGE_TYPES = [
@@ -168,7 +169,13 @@ export const ServerSettingsModal = () => {
             </div>
             <DialogFooter className="bg-gray-100 dark:bg-[#1E1F22] px-6 py-4">
               <Button type="submit" variant="default" disabled={isLoading}>
-                Update
+                {isLoading ? (
+                  <div className="flex gap-2">
+                    <Loader /> Updating...
+                  </div>
+                ) : (
+                  "Update"
+                )}
               </Button>
             </DialogFooter>
           </form>

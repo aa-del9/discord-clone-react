@@ -26,6 +26,7 @@ import { useUserContext } from "@/hooks/use-user-context";
 import { createServer } from "@/lib/appwrite/api";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import Loader from "../../components/shared/Loader";
 
 const MAX_FILE_SIZE = 5000000;
 const ACCEPTED_IMAGE_TYPES = [
@@ -148,7 +149,13 @@ export const CreateServerModal = () => {
             </div>
             <DialogFooter className="px-6 py-4">
               <Button type="submit" variant="default" disabled={isLoading}>
-                Create
+                {isLoading ? (
+                  <div className="flex gap-2">
+                    <Loader /> Creating...
+                  </div>
+                ) : (
+                  "Create"
+                )}
               </Button>
             </DialogFooter>
           </form>

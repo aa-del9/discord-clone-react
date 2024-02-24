@@ -41,10 +41,10 @@ export const InviteModal = () => {
             <Label className="uppercase text-xs font-bold text-primary dark:text-primary/70">
               Server Invite Link
             </Label>
-            <div className="flex items-center mt-2 gap-x-2 bg-zinc-700 rounded-md">
+            <div className="flex items-center mt-2 gap-x-2 bg-zinc-300 dark:bg-zinc-700 rounded-md">
               <Input
                 id="inviteUrlInput"
-                className="bg-transparent border-transparent text-white dark:text-primary focus-visible:ring-0 focus-visible:ring-offset-0"
+                className="bg-transparent border-transparent text-black dark:text-primary focus-visible:ring-0 focus-visible:ring-offset-0"
                 value={inviteUrl}
                 readOnly
               />

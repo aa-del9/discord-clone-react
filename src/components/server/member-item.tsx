@@ -33,7 +33,7 @@ const MemberItem = ({
           <div className="w-9 h-9 rounded-[50%] bg-indigo-500 object-cover">
             <img src={imageUrl} alt="aw" />
           </div>
-          <div className="text-sm text-zinc-300">
+          <div className="text-sm text-zinc-600 dark:text-zinc-300">
             <p>{username}</p>
           </div>
         </div>

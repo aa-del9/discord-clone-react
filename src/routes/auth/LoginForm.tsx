@@ -166,7 +166,7 @@ const LoginForm = () => {
                 >
                   {isLoading ? (
                     <div className="flex gap-2">
-                      <Loader /> Loading...
+                      <Loader color="white" /> Loading...
                     </div>
                   ) : (
                     "Log In"
