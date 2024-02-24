@@ -380,7 +380,10 @@ export const getServerInfoWithMembers = async (serverId: string) => {
           )
           .then((response) => ({
             server: { ...res },
-            members: { ...response.documents },
+            members: {
+              ...response.documents,
+            },
+            totalMembers: response.total,
           }));
         return members;
       },

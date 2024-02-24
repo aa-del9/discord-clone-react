@@ -28,6 +28,7 @@ const ServerIdLayout = () => {
         createdAt: "",
       },
       members: [],
+      totalMembers: 0,
     });
   console.log(serverWithMembers, "Role=" + role);
   const fetchData = async () => {
@@ -52,6 +53,7 @@ const ServerIdLayout = () => {
         createdAt: "",
       },
       members: [],
+      totalMembers: 0,
     });
   }, [state]);
 
@@ -86,6 +88,7 @@ const ServerIdLayout = () => {
             members={serverWithMembers.members}
             thisMember={thisMember}
             role={role}
+            totalMembers={serverWithMembers.totalMembers}
           />
         )}
       </div>

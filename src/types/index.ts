@@ -93,4 +93,5 @@ export type INewMember = {
 export type ServerWithMembersWithProfiles = {
   server: Server;
   members: Member[];
+  totalMembers: number;
 };
