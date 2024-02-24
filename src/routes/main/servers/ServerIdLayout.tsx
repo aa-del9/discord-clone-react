@@ -57,15 +57,15 @@ const ServerIdLayout = () => {
 
   useEffect(() => {
     for (let member in serverWithMembers.members) {
-      console.log(serverWithMembers.members[member]);
-      console.log(
-        serverWithMembers.members[member].userid?.$id,
-        user?.accountid
-      );
-
-      serverWithMembers.members[member].userid?.$id === user?.accountid &&
+      if (serverWithMembers.members[member].userid?.$id === user?.accountid) {
+        console.log(serverWithMembers.members[member]);
+        console.log(
+          serverWithMembers.members[member].userid?.$id,
+          user?.accountid
+        );
         setRole(serverWithMembers.members[member].role);
-      setThisMember(serverWithMembers.members[member]);
+        setThisMember(serverWithMembers.members[member]);
+      }
     }
   }, [serverWithMembers]);
 
@@ -83,7 +83,6 @@ const ServerIdLayout = () => {
       <div className="flex h-full w-60 z-20 flex-col fixed inset-y-0 right-0">
         {serverId !== "@me" && (
           <MembersSidebar
-            serverId={params.serverId}
             members={serverWithMembers.members}
             thisMember={thisMember}
             role={role}

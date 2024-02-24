@@ -11,7 +11,7 @@ import { leaveServer } from "@/lib/appwrite/api";
 export const LeaveServerModal = () => {
   const navigate = useNavigate();
   const { isOpen, data, type, onClose } = useModal();
-  const { thisMember } = data;
+  const { member: thisMember } = data;
   console.log(thisMember);
 
   const isModalOpen = isOpen && type === "leaveServer";

@@ -1,3 +1,4 @@
+import { useModal } from "@/hooks/use-model-store";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -5,14 +6,26 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "../ui/dropdown-menu";
+import { Member } from "@/types";
 
 interface MemberItemProps {
+  member: Member;
+  thisMember: Member;
   username: string | undefined;
   imageUrl: string;
   role: string;
 }
 
-const MemberItem = ({ username, imageUrl, role }: MemberItemProps) => {
+const MemberItem = ({
+  member,
+  thisMember,
+  username,
+  imageUrl,
+  role,
+}: MemberItemProps) => {
+  const { onOpen } = useModal();
+  console.log(thisMember, member);
+
   return (
     <DropdownMenu>
       <DropdownMenuTrigger>
@@ -26,8 +39,13 @@ const MemberItem = ({ username, imageUrl, role }: MemberItemProps) => {
         </div>
       </DropdownMenuTrigger>
       <DropdownMenuContent side="left">
-        {role === "creator" && (
-          <DropdownMenuItem className="text-rose-500 px-3 py-2 text-sm cursor-pointer">
+        {role === "creator" && member.$id !== thisMember.$id && (
+          <DropdownMenuItem
+            className="text-rose-500 px-3 py-2 text-sm cursor-pointer"
+            onClick={() => {
+              onOpen("kickMember", { member });
+            }}
+          >
             Kick {username}
           </DropdownMenuItem>
         )}

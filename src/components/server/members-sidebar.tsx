@@ -3,14 +3,12 @@ import { Member } from "@/types";
 import MemberItem from "./member-item";
 
 interface ServerSidebarProps {
-  serverId: string | undefined;
   thisMember: Member;
   role: string;
   members: Member[];
 }
 
 export const MembersSidebar = ({
-  serverId,
   thisMember,
   role,
   members,
@@ -24,6 +22,8 @@ export const MembersSidebar = ({
       </div>
       {Object.values(members).map((member) => (
         <MemberItem
+          member={member}
+          thisMember={thisMember}
           username={member.userid?.username}
           imageUrl="../../assets/icons/discord.svg"
           role={role}

@@ -376,7 +376,7 @@ export const getServerInfoWithMembers = async (serverId: string) => {
           .listDocuments(
             appwriteConfig.databaseId,
             appwriteConfig.membersCollectionId,
-            [Query.equal("servers", serverId)]
+            [Query.equal("servers", serverId), Query.equal("hasLeaved", false)]
           )
           .then((response) => ({
             server: { ...res },
