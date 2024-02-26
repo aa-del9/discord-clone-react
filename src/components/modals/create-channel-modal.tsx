@@ -1,10 +1,9 @@
 import * as z from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-import { Volume2 } from "lucide-react";
+import { Volume2, Hash } from "lucide-react";
 import {
   DialogHeader,
-  DialogDescription,
   DialogContent,
   DialogTitle,
   Dialog,
@@ -21,39 +20,18 @@ import {
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { useModal } from "@/hooks/use-model-store";
-import FileUploader from "../shared/FileUploader";
-import { useUserContext } from "@/hooks/use-user-context";
-import { createServer } from "@/lib/appwrite/api";
-import { useState } from "react";
-import { useNavigate } from "react-router-dom";
-import { Checkbox } from "@radix-ui/react-checkbox";
-const MAX_FILE_SIZE = 5000000;
-const ACCEPTED_IMAGE_TYPES = [
-  "image/jpeg",
-  "image/jpg",
-  "image/png",
-  "image/webp",
-];
+import { RadioGroup, RadioGroupItem } from "../ui/radio-group";
 
 const formSchema = z.object({
   name: z.string().min(1, {
     message: "Server name is required.",
   }),
-  image: z.array(
-    z
-      .any()
-      .refine((file) => file?.size <= MAX_FILE_SIZE, `Max image size is 5MB.`)
-      .refine(
-        (file) => ACCEPTED_IMAGE_TYPES.includes(file?.type),
-        "Only .jpg, .jpeg, .png and .webp formats are supported."
-      )
-  ),
+  channelType: z.enum(["text", "voice"], {
+    required_error: "Channel type is required.",
+  }),
 });
 
 export const CreateChannelModal = () => {
-  const navigate = useNavigate();
-  const { user } = useUserContext();
-  const [error, setError] = useState<string>("");
   const { isOpen, onClose, type } = useModal();
 
   const isModalOpen = isOpen && type === "createChannel";
@@ -61,31 +39,15 @@ export const CreateChannelModal = () => {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      name: user?.displayName.split(" ")[0] + "'s server",
-      image: [],
+      name: "",
+      channelType: "text",
     },
   });
 
   const isLoading = form.formState.isSubmitting;
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
-    console.log(values, user);
-    const server = await createServer({
-      name: values.name,
-      image: values.image[0],
-      creatorid: user?.accountid,
-      createdAt: new Date(),
-    });
-    console.log(server);
-
-    if (!server?.$id) {
-      setError("Something went wrong.");
-      return;
-    }
-    form.reset();
-    navigate("/servers/" + server.$id);
-    window.location.reload();
-    console.log(server);
+    console.log(values);
   };
 
   const handleClose = () => {
@@ -95,7 +57,7 @@ export const CreateChannelModal = () => {
 
   return (
     <Dialog open={isModalOpen} onOpenChange={handleClose}>
-      <DialogContent className="bg-zinc text-white p-0 overflow-hidden">
+      <DialogContent className="bg-white max-w-[460px] text-primary dark:bg-[#1E1F22] p-0 sm:rounded-[14px]">
         <DialogHeader className="pt-8 px-6">
           <DialogTitle className="text-xl">Create Channel</DialogTitle>
         </DialogHeader>
@@ -104,24 +66,60 @@ export const CreateChannelModal = () => {
             <div className=" px-6">
               <FormField
                 control={form.control}
-                name="name"
+                name="channelType"
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel className="uppercase text-xs primary:text-secondary/20">
                       Channel Type
                     </FormLabel>
                     <FormControl>
-                      <div className=" flex p-2 bg-zinc-300/50 ">
-                        <Volume2 />
-                        <Input
-                          disabled={isLoading}
-                          className="bg-zinc-300/50 border-0 focus-visible:ring-0 text-black focus-visible:ring-offset-0"
-                          placeholder="Enter server name"
-                          {...field}
-                        />
+                      <RadioGroup
+                        onValueChange={field.onChange}
+                        defaultValue={field.value}
+                        className="flex flex-col space-y-1"
+                      >
+                        <FormItem className="hover:bg-zinc-300/100 hover:dark:bg-zinc-600 hover:cursor-pointer">
+                          <div className="sm:rounded-[8px] flex items-center w-full h-14 bg-zinc-300/50 dark:bg-zinc-700/50 rounded-md hover:bg-zinc-300/100 hover:dark:bg-zinc-600">
+                            <Hash className="opacity-[0.6] mx-3" />
+                            <FormLabel
+                              className="flex flex-1 flex-col text-md font-normal hover:cursor-pointer"
+                              // onClick={voiceDivClicked}
+                            >
+                              Text
+                              <p className="text-xs text-primary/60 mt-1">
+                                Send messages, images, GIFs, emoji, opinions,
+                                and puns
+                              </p>
+                            </FormLabel>
+                            <RadioGroupItem
+                              value="text"
+                              className="mr-5 w-5 h-5"
+                              checked={field.value === "text"}
+                            />
+                          </div>
+                        </FormItem>
 
-                        <Checkbox />
-                      </div>
+                        <FormItem className="flex items-center space-x-3 space-y-0 hover:bg-zinc-600 hover:cursor-pointer">
+                          <div className="sm:rounded-[8px] flex flex-1 items-center w-full h-14 bg-zinc-300/50 dark:bg-zinc-700/50 rounded-md hover:bg-zinc-300/100 hover:dark:bg-zinc-600 hover:cursor-pointer">
+                            <Volume2 className="opacity-[0.6] mx-3" />
+                            <FormLabel
+                              className="flex flex-1 flex-col text-md font-normal hover:cursor-pointer"
+                              // onClick={voiceDivClicked}
+                            >
+                              Voice
+                              <p className="text-xs text-primary/60 mt-1">
+                                Hang out together with voice, video, and screen
+                                share
+                              </p>
+                            </FormLabel>
+                            <RadioGroupItem
+                              checked={field.value === "voice"}
+                              value="voice"
+                              className="mr-5 w-5 h-5"
+                            />
+                          </div>
+                        </FormItem>
+                      </RadioGroup>
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -134,23 +132,30 @@ export const CreateChannelModal = () => {
                 name="name"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel className="uppercase text-xs font-bold text-zinc-500 dark:text-secondary/70">
-                      Server name
+                    <FormLabel className="uppercase text-xs font-bold text-zinc-500 dark:text-primary">
+                      channel name
                     </FormLabel>
                     <FormControl>
-                      <Input
-                        disabled={isLoading}
-                        className="bg-zinc-300/50 border-0 focus-visible:ring-0 text-black focus-visible:ring-offset-0"
-                        placeholder="Enter server name"
-                        {...field}
-                      />
+                      <div className="sm:rounded-[4px] flex bg-zinc-300/50 dark:bg-background justify-center items-center">
+                        {form.getValues("channelType") == "text" ? (
+                          <Hash className="w-5 h-5 ml-2 opacity-[0.7]" />
+                        ) : (
+                          <Volume2 className="w-5 h-5 ml-2 opacity-[0.7]" />
+                        )}
+                        <Input
+                          disabled={isLoading}
+                          className="bg-zinc-300/50 dark:bg-background border-0 focus-visible:ring-0 text-primary focus-visible:ring-offset-0"
+                          placeholder="new-channel"
+                          {...field}
+                        />
+                      </div>
                     </FormControl>
                     <FormMessage />
                   </FormItem>
                 )}
               />
             </div>
-            <DialogFooter className="bg-gray-100 px-6 py-4">
+            <DialogFooter className="px-6 py-4">
               <Button type="submit" variant="default" disabled={isLoading}>
                 Create
               </Button>
