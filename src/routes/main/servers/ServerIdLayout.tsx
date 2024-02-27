@@ -1,8 +1,8 @@
 import MembersSidebar from "@/components/server/members-sidebar";
 import ServerSidebar from "@/components/server/server-sidebar";
 import { useUserContext } from "@/hooks/use-user-context";
-import { getServerInfoWithMembers } from "@/lib/appwrite/api";
-import { Member, ServerWithMembersWithProfiles } from "@/types";
+import { getServerInfoWithMembersAndChannels } from "@/lib/appwrite/api";
+import { Member, ServerWithMembersWithChannels } from "@/types";
 import { useEffect, useState } from "react";
 import { useLocation, useParams } from "react-router-dom";
 
@@ -17,9 +17,10 @@ const ServerIdLayout = () => {
     username: "",
     userid: user,
     role: "",
+    hasLeaved: false,
   });
-  const [serverWithMembers, setServerWithMembers] =
-    useState<ServerWithMembersWithProfiles>({
+  const [serverWithMembersAndChannels, setServerWithMembersAndChannels] =
+    useState<ServerWithMembersWithChannels>({
       server: {
         $id: "",
         name: state?.name,
@@ -27,24 +28,28 @@ const ServerIdLayout = () => {
         inviteCode: "",
         createdAt: "",
       },
+      channels: [],
       members: [],
       totalMembers: 0,
     });
-  console.log(serverWithMembers, "Role=" + role);
+  console.log(serverWithMembersAndChannels, "Role=" + role);
   const fetchData = async () => {
-    const res = await getServerInfoWithMembers(serverId ? serverId : "");
+    const res = await getServerInfoWithMembersAndChannels(
+      serverId ? serverId : ""
+    );
     console.log(res);
-    setServerWithMembers(res);
-    console.log(serverWithMembers);
+    setServerWithMembersAndChannels(res);
+    console.log(serverWithMembersAndChannels);
   };
 
   useEffect(() => {
+    setRole("guest");
     const res = serverId !== "@me" ? fetchData() : undefined;
     console.log(res);
   }, [serverId]);
 
   useEffect(() => {
-    setServerWithMembers({
+    setServerWithMembersAndChannels({
       server: {
         $id: "",
         name: state?.name,
@@ -52,32 +57,35 @@ const ServerIdLayout = () => {
         inviteCode: "",
         createdAt: "",
       },
+      channels: [],
       members: [],
       totalMembers: 0,
     });
   }, [state]);
 
   useEffect(() => {
-    for (let member in serverWithMembers.members) {
-      if (serverWithMembers.members[member].userid?.$id === user?.accountid) {
-        console.log(serverWithMembers.members[member]);
+    for (let member in serverWithMembersAndChannels.members) {
+      if (
+        serverWithMembersAndChannels.members[member].userid?.$id ===
+        user?.accountid
+      ) {
+        console.log(serverWithMembersAndChannels.members[member]);
         console.log(
-          serverWithMembers.members[member].userid?.$id,
+          serverWithMembersAndChannels.members[member].userid?.$id,
           user?.accountid
         );
-        setRole(serverWithMembers.members[member].role);
-        setThisMember(serverWithMembers.members[member]);
+        setRole(serverWithMembersAndChannels.members[member].role);
+        setThisMember(serverWithMembersAndChannels.members[member]);
       }
     }
-  }, [serverWithMembers]);
+  }, [serverWithMembersAndChannels]);
 
   return (
     <div className="h-full">
       <div className="flex h-full w-60 z-20 flex-col fixed inset-y-0">
         <ServerSidebar
-          serverId={params.serverId}
           thisMember={thisMember}
-          serverWithMembers={serverWithMembers}
+          serverWithMembersAndChannels={serverWithMembersAndChannels}
           role={role}
         />
       </div>
@@ -85,10 +93,10 @@ const ServerIdLayout = () => {
       <div className="flex h-full w-60 z-20 flex-col fixed inset-y-0 right-0">
         {serverId !== "@me" && (
           <MembersSidebar
-            members={serverWithMembers.members}
+            members={serverWithMembersAndChannels.members}
             thisMember={thisMember}
             role={role}
-            totalMembers={serverWithMembers.totalMembers}
+            totalMembers={serverWithMembersAndChannels.totalMembers}
           />
         )}
       </div>

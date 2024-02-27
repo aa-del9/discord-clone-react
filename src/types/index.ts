@@ -84,6 +84,7 @@ export type Member = {
   userid: IUser;
   role: string;
   servers?: Server;
+  hasLeaved: boolean;
 };
 export type INewMember = {
   role: string;
@@ -91,8 +92,24 @@ export type INewMember = {
   servers: string;
 };
 
-export type ServerWithMembersWithProfiles = {
+export type ServerWithMembersWithChannels = {
   server: Server;
   members: Member[];
+  channels: Channel[];
   totalMembers: number;
+};
+
+export type INewChannel = {
+  name: string;
+  server: string;
+  creatorid: string;
+  type: string;
+};
+
+export type Channel = {
+  $id: string;
+  name: string;
+  server: string;
+  creatorid: string;
+  type: string;
 };

@@ -21,10 +21,11 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { useModal } from "@/hooks/use-model-store";
 import { RadioGroup, RadioGroupItem } from "../ui/radio-group";
+import { createChannel } from "@/lib/appwrite/api";
 
 const formSchema = z.object({
   name: z.string().min(1, {
-    message: "Server name is required.",
+    message: "Channel name is required.",
   }),
   channelType: z.enum(["text", "voice"], {
     required_error: "Channel type is required.",
@@ -32,7 +33,9 @@ const formSchema = z.object({
 });
 
 export const CreateChannelModal = () => {
-  const { isOpen, onClose, type } = useModal();
+  const { isOpen, onClose, type, data } = useModal();
+  const { serverDetail, member, channelType } = data;
+  console.log(serverDetail, member);
 
   const isModalOpen = isOpen && type === "createChannel";
 
@@ -40,7 +43,7 @@ export const CreateChannelModal = () => {
     resolver: zodResolver(formSchema),
     defaultValues: {
       name: "",
-      channelType: "text",
+      channelType: channelType,
     },
   });
 
@@ -48,6 +51,16 @@ export const CreateChannelModal = () => {
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
     console.log(values);
+    const newChannel = await createChannel({
+      name: values.name,
+      type: values.channelType,
+      server: serverDetail?.$id ? serverDetail.$id : "",
+      creatorid: member?.$id ? member.$id : "",
+    });
+    console.log(newChannel);
+
+    if (!newChannel?.$id) return;
+    form.reset();
   };
 
   const handleClose = () => {

@@ -1,4 +1,12 @@
-import { INewMember, INewServer, INewUser, IUserLogin, Server } from "@/types";
+import {
+  INewChannel,
+  INewMember,
+  INewServer,
+  INewUser,
+  IUserLogin,
+  Member,
+  Server,
+} from "@/types";
 import { account, appwriteConfig, databases, storage } from "./config";
 import { ID, Query } from "appwrite";
 import { v4 as uuidv4 } from "uuid";
@@ -363,7 +371,7 @@ export const rejoinServer = async (memberID: string) => {
   }
 };
 
-export const getServerInfoWithMembers = async (serverId: string) => {
+export const getServerInfoWithMembersAndChannels = async (serverId: string) => {
   const server = await databases
     .getDocument(
       appwriteConfig.databaseId,
@@ -372,20 +380,21 @@ export const getServerInfoWithMembers = async (serverId: string) => {
     )
     .then(
       async (res) => {
-        const members = await databases
-          .listDocuments(
-            appwriteConfig.databaseId,
-            appwriteConfig.membersCollectionId,
-            [Query.equal("servers", serverId), Query.equal("hasLeaved", false)]
-          )
-          .then((response) => ({
-            server: { ...res },
-            members: {
-              ...response.documents,
-            },
-            totalMembers: response.total,
-          }));
-        return members;
+        console.log(res);
+        return {
+          server: {
+            $id: res.$id,
+            name: res.name,
+            imageUrl: res.imageUrl,
+            inviteCode: res.inviteCode,
+            createdAt: res.$createdAt,
+          },
+          members: res.members.filter((member: Member) => !member.hasLeaved),
+          channels: res.channels,
+          totalMembers: res.members.filter(
+            (member: Member) => !member.hasLeaved
+          ).length,
+        };
       },
       (err) => {
         console.log(err);
@@ -393,6 +402,22 @@ export const getServerInfoWithMembers = async (serverId: string) => {
       }
     );
   return server;
+};
+
+//channel
+
+export const createChannel = async (channel: INewChannel) => {
+  try {
+    const newChannel = await databases.createDocument(
+      appwriteConfig.databaseId,
+      appwriteConfig.channelsCollectionId,
+      ID.unique(),
+      channel
+    );
+    return newChannel;
+  } catch (error) {
+    console.log(error);
+  }
 };
 
 export const getFilePreview = async (fileId: string) => {

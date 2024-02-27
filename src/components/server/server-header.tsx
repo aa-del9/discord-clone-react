@@ -15,10 +15,10 @@ import {
   DropdownMenuTrigger,
 } from "../ui/dropdown-menu";
 import { useModal } from "@/hooks/use-model-store";
-import { Member, ServerWithMembersWithProfiles } from "@/types";
+import { Member, Server, ServerWithMembersWithChannels } from "@/types";
 
 interface ServerHeaderProps {
-  server: ServerWithMembersWithProfiles;
+  server: Server;
   role: string | undefined;
   thisMember: Member;
 }
@@ -30,7 +30,7 @@ export const ServerHeader = ({
 }: ServerHeaderProps) => {
   console.log(thisMember);
 
-  const serverDetail = server.server;
+  const serverDetail = server;
   console.log(serverDetail);
 
   const { onOpen } = useModal();
@@ -76,7 +76,9 @@ export const ServerHeader = ({
         {isModerator && (
           <DropdownMenuItem
             className="px-3 py-2 text-sm cursor-pointer"
-            onClick={() => onOpen("createChannel", { serverDetail })}
+            onClick={() =>
+              onOpen("createChannel", { serverDetail, member: thisMember })
+            }
           >
             Create Channel
             <PlusCircle className="h-4 w-4 ml-auto" />
