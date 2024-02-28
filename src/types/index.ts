@@ -1,20 +1,5 @@
 import React from "react";
 
-export type INavLink = {
-  imgURL: string;
-  route: string;
-  label: string;
-};
-
-export type IUpdateUser = {
-  userId: string;
-  name: string;
-  bio: string;
-  imageId: string;
-  imageUrl: URL | string;
-  file: File[];
-};
-
 export type INewServer = {
   name: string;
   image: File;
@@ -32,16 +17,6 @@ export type IContextType = {
   checkAuthUser: () => Promise<boolean>;
   isInvite: boolean;
   setIsInvite: React.Dispatch<React.SetStateAction<boolean>>;
-};
-
-export type IUpdatePost = {
-  postId: string;
-  caption: string;
-  imageId: string;
-  imageUrl: URL;
-  file: File[];
-  location?: string;
-  tags?: string;
 };
 
 export type IUser =
@@ -76,11 +51,20 @@ export type Server = {
   imageUrl: string;
   inviteCode: string | null;
   createdAt: Date | string;
+  channels?: Channel[];
+};
+
+export type ServerWithChannels = {
+  $id: string;
+  name: string;
+  imageUrl: string;
+  inviteCode: string | null;
+  createdAt: Date | string;
+  channels: Channel[];
 };
 
 export type Member = {
   $id: string;
-  username: string;
   userid: IUser;
   role: string;
   servers?: Server;
@@ -92,12 +76,20 @@ export type INewMember = {
   servers: string;
 };
 
-export type ServerWithMembersWithChannels = {
-  server: Server;
-  members: Member[];
-  channels: Channel[];
-  totalMembers: number;
+export type MemberWithServerWithUser = {
+  $id: string;
+  userid: IUser;
+  role: string;
+  servers: ServerWithChannels;
+  hasLeaved: boolean;
 };
+
+// export type ServerWithMembersWithChannels = {
+//   server: Server;
+//   members: Member[];
+//   channels: Channel[];
+//   totalMembers: number;
+// };
 
 export type INewChannel = {
   name: string;
@@ -109,7 +101,6 @@ export type INewChannel = {
 export type Channel = {
   $id: string;
   name: string;
-  server: string;
-  creatorid: string;
+  creatorid?: string;
   type: string;
 };

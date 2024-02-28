@@ -1,43 +1,37 @@
 import { ScrollArea } from "../ui/scroll-area";
 import { ServerHeader } from "./server-header";
-import { Member, ServerWithMembersWithChannels } from "@/types";
+import { MemberWithServerWithUser } from "@/types";
 import { ServerSection } from "./server-section";
 import { ServerChannel } from "./server-channel";
 
 interface ServerSidebarProps {
-  thisMember: Member;
-  role: string;
-  serverWithMembersAndChannels: ServerWithMembersWithChannels;
+  memberWithServersAndUser: MemberWithServerWithUser;
 }
 
 export const ServerSidebar = ({
-  thisMember,
-  role,
-  serverWithMembersAndChannels,
+  memberWithServersAndUser,
 }: ServerSidebarProps) => {
-  console.log(serverWithMembersAndChannels, "Role=" + role);
+  console.log(
+    memberWithServersAndUser,
+    "Role=" + memberWithServersAndUser?.role
+  );
 
   return (
     <div className="flex flex-col h-full text-primary w-full dark:bg-[#2B2D32] bg-[#F2F3F5]">
-      {serverWithMembersAndChannels.server.$id && (
-        <ServerHeader
-          server={serverWithMembersAndChannels.server}
-          role={role}
-          thisMember={thisMember}
-        />
-      )}
+      <ServerHeader memberWithServersAndUser={memberWithServersAndUser} />
+
       <ScrollArea className="flex-1 px-3">
         <ServerSection
           sectionType="channels"
           channelType="text"
-          role={role}
+          role={memberWithServersAndUser?.role}
           label="Text Channels"
         />
-        {serverWithMembersAndChannels.channels.map((channel) => (
+        {memberWithServersAndUser?.servers?.channels?.map((channel) => (
           <ServerChannel
             channel={channel}
-            role={role}
-            server={serverWithMembersAndChannels.server}
+            role={memberWithServersAndUser?.role}
+            server={memberWithServersAndUser?.servers}
           />
         ))}
       </ScrollArea>
