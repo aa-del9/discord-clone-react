@@ -4,6 +4,7 @@ import MemberItem from "./member-item";
 import { useEffect, useState } from "react";
 import { getAllServerMembers } from "@/lib/appwrite/api";
 import { useParams } from "react-router-dom";
+import { MemberItemSkeleton } from "../skeletons/member-item-skeleton";
 
 interface MemberSidebarProps {
   thisMember: Member;
@@ -35,15 +36,23 @@ export const MembersSidebar = ({ thisMember, role }: MemberSidebarProps) => {
           total - {members.length}
         </p>
       </div>
-      {Object.values(members).map((member) => (
-        <MemberItem
-          member={member}
-          thisMember={thisMember}
-          username={member.userid?.username}
-          imageUrl="../../assets/icons/discord.svg"
-          role={role}
-        />
-      ))}
+      {members.length ? (
+        Object.values(members).map((member) => (
+          <MemberItem
+            member={member}
+            thisMember={thisMember}
+            username={member.userid?.username}
+            imageUrl="../../assets/icons/discord.svg"
+            role={role}
+          />
+        ))
+      ) : (
+        <>
+          <MemberItemSkeleton />
+          <MemberItemSkeleton />
+          <MemberItemSkeleton />
+        </>
+      )}
     </div>
   );
 };

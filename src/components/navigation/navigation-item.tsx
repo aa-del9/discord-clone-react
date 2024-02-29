@@ -2,6 +2,7 @@ import { cn } from "@/lib/utils";
 import { ActionTooltip } from "@/components/action-tooltip";
 import { useNavigate, useParams } from "react-router-dom";
 import { MemberWithServerWithUser } from "@/types";
+import { useModal } from "@/hooks/use-model-store";
 
 interface NavigationItemProps {
   memberWithServersAndUser: MemberWithServerWithUser;
@@ -10,10 +11,12 @@ interface NavigationItemProps {
 export const NavigationItem = ({
   memberWithServersAndUser,
 }: NavigationItemProps) => {
+  const { onClose } = useModal();
   const params = useParams();
   const navigate = useNavigate();
   const onClick = () => {
     console.log(memberWithServersAndUser);
+    onClose();
     navigate(`/servers/${memberWithServersAndUser.servers.$id}`, {
       state: { memberWithServersAndUser },
     });
