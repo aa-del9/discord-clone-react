@@ -22,6 +22,8 @@ import { Button } from "@/components/ui/button";
 import { useModal } from "@/hooks/use-model-store";
 import { RadioGroup, RadioGroupItem } from "../ui/radio-group";
 import { createChannel } from "@/lib/appwrite/api";
+import Loader from "../shared/Loader";
+import { useEffect } from "react";
 
 const formSchema = z.object({
   name: z.string().min(1, {
@@ -35,7 +37,7 @@ const formSchema = z.object({
 export const CreateChannelModal = () => {
   const { isOpen, onClose, type, data } = useModal();
   const { serverDetail, member, channelType } = data;
-  console.log(serverDetail, member);
+  console.log(serverDetail, member, channelType);
 
   const isModalOpen = isOpen && type === "createChannel";
 
@@ -60,6 +62,7 @@ export const CreateChannelModal = () => {
     console.log(newChannel);
 
     if (!newChannel?.$id) return;
+
     form.reset();
   };
 
@@ -67,6 +70,12 @@ export const CreateChannelModal = () => {
     form.reset();
     onClose();
   };
+
+  useEffect(() => {
+    if (channelType) {
+      form.setValue("channelType", channelType);
+    }
+  }, [channelType, form]);
 
   return (
     <Dialog open={isModalOpen} onOpenChange={handleClose}>
@@ -170,7 +179,13 @@ export const CreateChannelModal = () => {
             </div>
             <DialogFooter className="px-6 py-4">
               <Button type="submit" variant="default" disabled={isLoading}>
-                Create
+                {isLoading ? (
+                  <div className="flex gap-2">
+                    <Loader /> Creating...
+                  </div>
+                ) : (
+                  "Create"
+                )}
               </Button>
             </DialogFooter>
           </form>

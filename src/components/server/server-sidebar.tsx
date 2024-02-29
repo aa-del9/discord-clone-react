@@ -27,13 +27,33 @@ export const ServerSidebar = ({
           role={memberWithServersAndUser?.role}
           label="Text Channels"
         />
-        {memberWithServersAndUser?.servers?.channels?.map((channel) => (
-          <ServerChannel
-            channel={channel}
-            role={memberWithServersAndUser?.role}
-            server={memberWithServersAndUser?.servers}
-          />
-        ))}
+        {memberWithServersAndUser?.servers?.channels?.map(
+          (channel) =>
+            channel.type === "text" && (
+              <ServerChannel
+                channel={channel}
+                role={memberWithServersAndUser?.role}
+                server={memberWithServersAndUser?.servers}
+              />
+            )
+        )}
+        <ServerSection
+          sectionType="channels"
+          channelType="voice"
+          role={memberWithServersAndUser?.role}
+          label="Voice Channels"
+        />
+
+        {memberWithServersAndUser?.servers?.channels?.map(
+          (channel) =>
+            channel.type === "voice" && (
+              <ServerChannel
+                channel={channel}
+                role={memberWithServersAndUser?.role}
+                server={memberWithServersAndUser?.servers}
+              />
+            )
+        )}
       </ScrollArea>
     </div>
   );
