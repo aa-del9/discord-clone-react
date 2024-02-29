@@ -1,6 +1,6 @@
 import { Member } from "@/types";
 
-import MemberItem from "./member-item";
+import { MemberItem } from "./member-item";
 import { useEffect, useState } from "react";
 import { getAllServerMembers } from "@/lib/appwrite/api";
 import { useParams } from "react-router-dom";
