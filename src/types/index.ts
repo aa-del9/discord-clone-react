@@ -19,6 +19,19 @@ export type UserContextType = {
   setIsInvite: React.Dispatch<React.SetStateAction<boolean>>;
 };
 
+export type ServerContextType = {
+  memberWithServerWithUser: MemberWithServerWithUser[];
+  members: Member[];
+  isLoading: boolean;
+  setIsLoading: React.Dispatch<React.SetStateAction<boolean>>;
+  setMemberWithServerWithUser: React.Dispatch<
+    React.SetStateAction<MemberWithServerWithUser[]>
+  >;
+  setMembers: React.Dispatch<React.SetStateAction<Member[]>>;
+  getServers: () => Promise<boolean>;
+  getMembers: (serverId: string) => Promise<boolean>;
+};
+
 export type IUser =
   | {
       $id: string;
@@ -103,12 +116,4 @@ export type Channel = {
   name: string;
   creatorid?: string;
   type: string;
-};
-export type ServerContextType = {
-  servers: ServerWithChannels[];
-  members: Member[];
-  isLoading: boolean;
-  setIsLoading: React.Dispatch<React.SetStateAction<boolean>>;
-  setServers: React.Dispatch<React.SetStateAction<ServerWithChannels[]>>;
-  setMembers: React.Dispatch<React.SetStateAction<Member[]>>;
 };

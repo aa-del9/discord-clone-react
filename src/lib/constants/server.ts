@@ -1,14 +1,21 @@
+import { INITIAL_USER } from "./auth";
+
 export const INITIAL_STATE = {
-  servers: [],
+  memberWithServerWithUser: [],
   members: [],
   isLoading: false,
   setIsLoading: () => {},
-  setServers: () => {},
+  setMemberWithServerWithUser: () => {},
   setMembers: () => {},
+  getServers: async () => false as boolean,
+  getMembers: async (serverId: string) => false as boolean,
 };
 
-export const INITIAL_SERVER = [
-  {
+export const INITIAL_SERVER = {
+  $id: "",
+  userid: INITIAL_USER,
+  role: "",
+  servers: {
     $id: "",
     name: "",
     imageUrl: "",
@@ -16,4 +23,5 @@ export const INITIAL_SERVER = [
     createdAt: "",
     channels: [],
   },
-];
+  hasLeaved: false,
+};
