@@ -30,6 +30,7 @@ export type ServerContextType = {
   setMembers: React.Dispatch<React.SetStateAction<Member[]>>;
   getServers: () => Promise<boolean>;
   getMembers: (serverId: string) => Promise<boolean>;
+  updateServerChannels: (channel: Channel, serverId: string) => void;
 };
 
 export type IUser =

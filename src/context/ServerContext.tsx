@@ -1,7 +1,12 @@
 import { useUserContext } from "@/hooks/use-user-context";
 import { getAllServerMembers, getServersOfUser } from "@/lib/appwrite/api";
 import { INITIAL_SERVER, INITIAL_STATE } from "@/lib/constants/server";
-import { Member, MemberWithServerWithUser, ServerContextType } from "@/types";
+import {
+  Channel,
+  Member,
+  MemberWithServerWithUser,
+  ServerContextType,
+} from "@/types";
 import { createContext, useEffect, useState } from "react";
 
 export const ServerContext = createContext<ServerContextType>(INITIAL_STATE);
@@ -43,6 +48,23 @@ const ServerProvider = ({ children }: { children: React.ReactNode }) => {
     }
   };
 
+  const updateServerChannels = (channel: Channel, serverId: string) => {
+    const newServers = memberWithServerWithUser.map((server) => {
+      if (server.servers.$id === serverId) {
+        const newChannel = server.servers.channels.push({
+          $id: channel.$id,
+          name: channel.name,
+          type: channel.type,
+        });
+        return { ...server, channels: newChannel };
+      }
+      return server;
+    });
+    console.log(newServers);
+
+    // setMemberWithServerWithUser(newServers);
+  };
+
   const value = {
     memberWithServerWithUser,
     setMemberWithServerWithUser,
@@ -52,6 +74,7 @@ const ServerProvider = ({ children }: { children: React.ReactNode }) => {
     setIsLoading,
     getServers,
     getMembers,
+    updateServerChannels,
   };
 
   useEffect(() => {

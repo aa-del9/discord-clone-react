@@ -24,7 +24,7 @@ import { RadioGroup, RadioGroupItem } from "../ui/radio-group";
 import { createChannel } from "@/lib/appwrite/api";
 import Loader from "../shared/Loader";
 import { useEffect } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { useServerContext } from "@/hooks/use-server-context";
 
 const formSchema = z.object({
   name: z.string().min(1, {
@@ -36,11 +36,10 @@ const formSchema = z.object({
 });
 
 export const CreateChannelModal = () => {
-  const params = useParams();
+  const { memberWithServerWithUser, updateServerChannels } = useServerContext();
   const { isOpen, onClose, type, data } = useModal();
   const { serverDetail, member, channelType } = data;
   console.log(serverDetail, member, channelType);
-  const navigate = useNavigate();
   const isModalOpen = isOpen && type === "createChannel";
 
   const form = useForm<z.infer<typeof formSchema>>({
@@ -63,9 +62,17 @@ export const CreateChannelModal = () => {
     });
     console.log(newChannel);
 
-    if (!newChannel?.$id) return;
-
-    navigate("/servers/" + params?.serverId, { state: { newChannel: true } });
+    if (!newChannel?.$id) {
+      return;
+    } else {
+      console.log("Channel created");
+      updateServerChannels(
+        { $id: newChannel.$id, name: newChannel.name, type: newChannel.type },
+        serverDetail?.$id ? serverDetail.$id : ""
+      );
+      console.log(memberWithServerWithUser);
+      onClose();
+    }
     form.reset();
   };
 

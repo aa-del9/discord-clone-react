@@ -8,7 +8,8 @@ export const INITIAL_STATE = {
   setMemberWithServerWithUser: () => {},
   setMembers: () => {},
   getServers: async () => false as boolean,
-  getMembers: async (serverId: string) => false as boolean,
+  getMembers: async () => false as boolean,
+  updateServerChannels: () => {},
 };
 
 export const INITIAL_SERVER = {
