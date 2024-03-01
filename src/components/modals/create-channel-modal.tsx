@@ -24,6 +24,7 @@ import { RadioGroup, RadioGroupItem } from "../ui/radio-group";
 import { createChannel } from "@/lib/appwrite/api";
 import Loader from "../shared/Loader";
 import { useEffect } from "react";
+import { useNavigate, useParams } from "react-router-dom";
 
 const formSchema = z.object({
   name: z.string().min(1, {
@@ -35,10 +36,11 @@ const formSchema = z.object({
 });
 
 export const CreateChannelModal = () => {
+  const params = useParams();
   const { isOpen, onClose, type, data } = useModal();
   const { serverDetail, member, channelType } = data;
   console.log(serverDetail, member, channelType);
-
+  const navigate = useNavigate();
   const isModalOpen = isOpen && type === "createChannel";
 
   const form = useForm<z.infer<typeof formSchema>>({
@@ -63,6 +65,7 @@ export const CreateChannelModal = () => {
 
     if (!newChannel?.$id) return;
 
+    navigate("/servers/" + params?.serverId, { state: { newChannel: true } });
     form.reset();
   };
 

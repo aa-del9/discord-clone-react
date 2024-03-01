@@ -1,10 +1,10 @@
 import { getCurrentUser } from "@/lib/appwrite/api";
 import { INITIAL_STATE, INITIAL_USER } from "@/lib/constants/auth";
 import SplashScreen from "@/components/splash-screen";
-import { IContextType, IUser } from "@/types";
+import { UserContextType, IUser } from "@/types";
 import { createContext, useEffect, useState } from "react";
 
-export const AuthContext = createContext<IContextType>(INITIAL_STATE);
+export const AuthContext = createContext<UserContextType>(INITIAL_STATE);
 
 const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [user, setUser] = useState<IUser>(INITIAL_USER);

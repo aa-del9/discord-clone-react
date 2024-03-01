@@ -7,7 +7,7 @@ export type INewServer = {
   createdAt: Date;
 };
 
-export type IContextType = {
+export type UserContextType = {
   user: IUser;
   isLoading: boolean;
   setUser: React.Dispatch<React.SetStateAction<IUser>>;
@@ -103,4 +103,12 @@ export type Channel = {
   name: string;
   creatorid?: string;
   type: string;
+};
+export type ServerContextType = {
+  servers: ServerWithChannels[];
+  members: Member[];
+  isLoading: boolean;
+  setIsLoading: React.Dispatch<React.SetStateAction<boolean>>;
+  setServers: React.Dispatch<React.SetStateAction<ServerWithChannels[]>>;
+  setMembers: React.Dispatch<React.SetStateAction<Member[]>>;
 };

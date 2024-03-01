@@ -15,7 +15,12 @@ export const ServerSidebar = ({
     memberWithServersAndUser,
     "Role=" + memberWithServersAndUser?.role
   );
+  // const [channel, setChannel] = useState();
+  // const { state } = useLocation();
 
+  // useEffect(()=>{
+
+  // },[channel])
   return (
     <div className="flex flex-col h-full text-primary w-full dark:bg-[#2B2D32] bg-[#F2F3F5]">
       <ServerHeader memberWithServersAndUser={memberWithServersAndUser} />
