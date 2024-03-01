@@ -10,6 +10,7 @@ export const INITIAL_STATE = {
   getServers: async () => false as boolean,
   getMembers: async () => false as boolean,
   updateServerChannels: () => {},
+  updateServerInfo: () => {},
 };
 
 export const INITIAL_SERVER = {

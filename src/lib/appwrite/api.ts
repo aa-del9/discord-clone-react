@@ -181,7 +181,7 @@ export const createServer = async (server: INewServer) => {
       throw Error;
     }
 
-    return newServer;
+    return newMember;
   } catch (error) {
     console.log(error);
 
@@ -299,14 +299,11 @@ export const getServersOfUser = async (userid: string | undefined) => {
     );
   console.log(membersWithServersAndUser);
 
-  // const servers = membership.documents.map((document) => document.servers);
-  // console.log(servers);
-
   return membersWithServersAndUser;
 };
 
 export const createMember = async (member: INewMember) => {
-  const newMember = await databases
+  const newMember = databases
     .createDocument(
       appwriteConfig.databaseId,
       appwriteConfig.membersCollectionId,

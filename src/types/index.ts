@@ -31,6 +31,7 @@ export type ServerContextType = {
   getServers: () => Promise<boolean>;
   getMembers: (serverId: string) => Promise<boolean>;
   updateServerChannels: (channel: Channel, serverId: string) => void;
+  updateServerInfo: (server: ServerWithChannels) => void;
 };
 
 export type IUser =

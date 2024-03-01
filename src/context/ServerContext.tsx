@@ -6,6 +6,7 @@ import {
   Member,
   MemberWithServerWithUser,
   ServerContextType,
+  ServerWithChannels,
 } from "@/types";
 import { createContext, useEffect, useState } from "react";
 
@@ -61,8 +62,17 @@ const ServerProvider = ({ children }: { children: React.ReactNode }) => {
       return server;
     });
     console.log(newServers);
+    setMemberWithServerWithUser(newServers);
+  };
 
-    // setMemberWithServerWithUser(newServers);
+  const updateServerInfo = (server: ServerWithChannels) => {
+    const newServers = memberWithServerWithUser.map((member) => {
+      if (member.servers.$id === server.$id) {
+        return { ...member, servers: server };
+      }
+      return member;
+    });
+    setMemberWithServerWithUser(newServers);
   };
 
   const value = {
@@ -75,6 +85,7 @@ const ServerProvider = ({ children }: { children: React.ReactNode }) => {
     getServers,
     getMembers,
     updateServerChannels,
+    updateServerInfo,
   };
 
   useEffect(() => {
