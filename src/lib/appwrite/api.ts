@@ -1,4 +1,12 @@
-import { INewMember, INewServer, INewUser, IUserLogin, Server } from "@/types";
+import {
+  INewChannel,
+  INewMember,
+  INewServer,
+  INewUser,
+  IUserLogin,
+  Member,
+  Server,
+} from "@/types";
 import { account, appwriteConfig, databases, storage } from "./config";
 import { ID, Query } from "appwrite";
 import { v4 as uuidv4 } from "uuid";
@@ -270,7 +278,7 @@ export const getMembersWithServers = async (userid: string | undefined) => {
 };
 
 export const getServersOfUser = async (userid: string | undefined) => {
-  const membership = await databases
+  const membersWithServersAndUser = await databases
     .listDocuments(
       appwriteConfig.databaseId,
       appwriteConfig.membersCollectionId,
@@ -282,20 +290,19 @@ export const getServersOfUser = async (userid: string | undefined) => {
     .then(
       (res) => {
         console.log(res);
-
-        return res;
+        return res.documents;
       },
       (err) => {
         console.log(err);
         return err;
       }
     );
-  console.log(membership);
+  console.log(membersWithServersAndUser);
 
-  const servers = membership.documents.map((document) => document.servers);
-  console.log(servers);
+  // const servers = membership.documents.map((document) => document.servers);
+  // console.log(servers);
 
-  return servers;
+  return membersWithServersAndUser;
 };
 
 export const createMember = async (member: INewMember) => {
@@ -363,36 +370,43 @@ export const rejoinServer = async (memberID: string) => {
   }
 };
 
-export const getServerInfoWithMembers = async (serverId: string) => {
-  const server = await databases
-    .getDocument(
+export const getAllServerMembers = async (serverId: string) => {
+  try {
+    const members = await databases.listDocuments(
       appwriteConfig.databaseId,
-      appwriteConfig.serversCollectionId,
-      serverId
-    )
-    .then(
-      async (res) => {
-        const members = await databases
-          .listDocuments(
-            appwriteConfig.databaseId,
-            appwriteConfig.membersCollectionId,
-            [Query.equal("servers", serverId), Query.equal("hasLeaved", false)]
-          )
-          .then((response) => ({
-            server: { ...res },
-            members: {
-              ...response.documents,
-            },
-            totalMembers: response.total,
-          }));
-        return members;
-      },
-      (err) => {
-        console.log(err);
-        return err;
-      }
+      appwriteConfig.membersCollectionId,
+      [Query.equal("servers", serverId), Query.equal("hasLeaved", false)]
     );
-  return server;
+    console.log(members);
+    const memberArray: Member[] = members.documents.map((member) => {
+      const x: Member = {
+        ...member,
+        userid: member.userid,
+        role: member.role,
+        hasLeaved: member.hasLeaved,
+      };
+      return x;
+    });
+    return memberArray;
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+//channel
+
+export const createChannel = async (channel: INewChannel) => {
+  try {
+    const newChannel = await databases.createDocument(
+      appwriteConfig.databaseId,
+      appwriteConfig.channelsCollectionId,
+      ID.unique(),
+      channel
+    );
+    return newChannel;
+  } catch (error) {
+    console.log(error);
+  }
 };
 
 export const getFilePreview = async (fileId: string) => {

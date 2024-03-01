@@ -3,7 +3,6 @@ import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
-  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "../ui/dropdown-menu";
 import { Member } from "@/types";
@@ -16,7 +15,7 @@ interface MemberItemProps {
   role: string;
 }
 
-const MemberItem = ({
+export const MemberItem = ({
   member,
   thisMember,
   username,
@@ -53,5 +52,3 @@ const MemberItem = ({
     </DropdownMenu>
   );
 };
-
-export default MemberItem;

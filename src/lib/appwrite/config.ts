@@ -8,6 +8,7 @@ export const appwriteConfig = {
   serversCollectionId: import.meta.env.VITE_APPWRITE_SERVERS_COLLECTION_ID, // Your collection ID
   membersCollectionId: import.meta.env.VITE_APPWRITE_MEMBERS_COLLECTION_ID, // Your collection ID
   storageId: import.meta.env.VITE_APPWRITE_STORAGE_ID, // Your storage ID
+  channelsCollectionId: import.meta.env.VITE_APPWRITE_CHANNEL_COLLECTION_ID, // Your collection ID
 };
 
 export const client = new Client();

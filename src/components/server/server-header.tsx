@@ -15,34 +15,30 @@ import {
   DropdownMenuTrigger,
 } from "../ui/dropdown-menu";
 import { useModal } from "@/hooks/use-model-store";
-import { Member, ServerWithMembersWithProfiles } from "@/types";
+import { MemberWithServerWithUser } from "@/types";
 
 interface ServerHeaderProps {
-  server: ServerWithMembersWithProfiles;
-  role: string | undefined;
-  thisMember: Member;
+  memberWithServersAndUser: MemberWithServerWithUser;
 }
 
 export const ServerHeader = ({
-  server,
-  role,
-  thisMember,
+  memberWithServersAndUser,
 }: ServerHeaderProps) => {
-  console.log(thisMember);
+  console.log(memberWithServersAndUser);
 
-  const serverDetail = server.server;
+  const serverDetail = memberWithServersAndUser?.servers;
   console.log(serverDetail);
 
   const { onOpen } = useModal();
-  const isAdmin = role === "creator";
-  const isModerator = isAdmin || role === "moderator";
+  const isAdmin = memberWithServersAndUser?.role === "creator";
+  const isModerator = isAdmin || memberWithServersAndUser?.role === "moderator";
   console.log(serverDetail);
 
   return (
     <DropdownMenu>
       <DropdownMenuTrigger className="focus:outline-none" asChild>
         <button className="w-full text-md font-semibold px-3 flex items-center h-12 border-neutral-200 dark:border-neutral-800 border-b-2 hover:bg-zinc-700/10 dark:hover:bg-zinc-700/50 transition">
-          {serverDetail.name}
+          {serverDetail?.name}
           <ChevronDown className="h-5 w-5 ml-auto" />
         </button>
       </DropdownMenuTrigger>
@@ -68,13 +64,24 @@ export const ServerHeader = ({
           </DropdownMenuItem>
         )}
         {isAdmin && (
-          <DropdownMenuItem className="px-3 py-2 text-sm cursor-pointer">
+          <DropdownMenuItem
+            className="px-3 py-2 text-sm cursor-pointer"
+            onClick={() => onOpen("memberSidebar")}
+          >
             Manage Members
             <Users className="h-4 w-4 ml-auto" />
           </DropdownMenuItem>
         )}
         {isModerator && (
-          <DropdownMenuItem className="px-3 py-2 text-sm cursor-pointer">
+          <DropdownMenuItem
+            className="px-3 py-2 text-sm cursor-pointer"
+            onClick={() =>
+              onOpen("createChannel", {
+                serverDetail,
+                member: memberWithServersAndUser,
+              })
+            }
+          >
             Create Channel
             <PlusCircle className="h-4 w-4 ml-auto" />
           </DropdownMenuItem>
@@ -90,7 +97,7 @@ export const ServerHeader = ({
           <DropdownMenuItem
             className="text-rose-500 px-3 py-2 text-sm cursor-pointer"
             onClick={() => {
-              onOpen("leaveServer", { member: thisMember });
+              onOpen("leaveServer", { member: memberWithServersAndUser });
             }}
           >
             Leave Server

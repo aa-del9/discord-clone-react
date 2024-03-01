@@ -10,9 +10,13 @@ import { useSignOutAccount } from "@/lib/react-query/queriesAndMutations";
 import { useEffect } from "react";
 import { INITIAL_USER } from "@/lib/constants/auth";
 import { ModeToggle } from "../ui/mode-toggle";
-import { Server } from "@/types";
+import { MemberWithServerWithUser } from "@/types";
 
-export const NavigationSidebar = ({ servers }: { servers: Server[] }) => {
+export const NavigationSidebar = ({
+  membersWithServersAndUser,
+}: {
+  membersWithServersAndUser: MemberWithServerWithUser[];
+}) => {
   const { user, setIsAuthenticated, setUser } = useUserContext();
   const { mutate: signOut, isSuccess, isError } = useSignOutAccount();
   const navigate = useNavigate();
@@ -32,12 +36,10 @@ export const NavigationSidebar = ({ servers }: { servers: Server[] }) => {
       <Separator className="h-[2px] bg-zinc-300 dark:bg-zinc-700 rounded-md w-10 mx-auto" />
 
       <ScrollArea className="flex-1 w-full">
-        {servers.map((server) => (
+        {membersWithServersAndUser.map((object) => (
           <NavigationItem
-            key={server.$id}
-            id={server.$id}
-            imageUrl={server.imageUrl}
-            name={server.name}
+            memberWithServersAndUser={object}
+            key={object.servers.$id}
           />
         ))}
       </ScrollArea>

@@ -7,11 +7,14 @@ export type ModalType =
   | "invitation"
   | "leaveServer"
   | "serverSettings"
-  | "kickMember";
+  | "kickMember"
+  | "createChannel"
+  | "memberSidebar";
 
 interface ModalData {
   serverDetail?: Server;
   member?: Member;
+  channelType?: "text" | "voice";
 }
 
 interface ModalStore {
