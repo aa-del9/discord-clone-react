@@ -8,24 +8,24 @@ const ServerIdLayout = () => {
   const params = useParams();
   const serverId = params.serverId;
   const { memberWithServerWithUser } = useServerContext();
-  const thisServer = memberWithServerWithUser.find((thisServer) => {
-    return thisServer.servers.$id === serverId;
+  const thisMember = memberWithServerWithUser.find((thisMember) => {
+    return thisMember.servers.$id === serverId;
   });
-  console.log(thisServer);
+  console.log(thisMember);
   const { isOpen, type } = useModal();
   const showSidebar = isOpen && type === "memberSidebar";
-  const role = thisServer?.role ? thisServer.role : "guest";
+  const role = thisMember?.role ? thisMember.role : "guest";
 
   return (
-    thisServer && (
+    thisMember && (
       <div className="h-full">
         <div className="flex h-full w-60 z-20 flex-col fixed inset-y-0">
-          <ServerSidebar memberWithServersAndUser={thisServer} />
+          <ServerSidebar thisMember={thisMember} />
         </div>
         <main className="h-full md:pl-60"> server {params?.serverId}</main>
         <div className="flex h-full w-60 z-20 flex-col fixed inset-y-0 right-0">
           {serverId !== "@me" && showSidebar && (
-            <MembersSidebar thisMember={thisServer} role={role} />
+            <MembersSidebar thisMember={thisMember} role={role} />
           )}
         </div>
       </div>

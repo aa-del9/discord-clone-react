@@ -1,27 +1,24 @@
 import { ModalType, useModal } from "@/hooks/use-model-store";
 import { cn } from "@/lib/utils";
-import { Channel, Server } from "@/types";
+import { Channel, MemberWithServerWithUser, Server } from "@/types";
 import { useParams } from "react-router-dom";
 import { ActionTooltip } from "../action-tooltip";
 import { Edit, Lock, Trash } from "lucide-react";
 
 interface ServerChannelProps {
   channel: Channel;
-  server: Server;
-  role: string;
+  thisMember: MemberWithServerWithUser;
 }
 
-export const ServerChannel = ({
-  channel,
-  server,
-  role,
-}: ServerChannelProps) => {
+export const ServerChannel = ({ channel, thisMember }: ServerChannelProps) => {
   const { onOpen } = useModal();
   const params = useParams();
 
   const onAction = (e: React.MouseEvent, action: ModalType) => {
     e.stopPropagation();
-    // onOpen(action, { channel, server });
+    action === "createChannel"
+      ? onOpen(action, { channel, member: thisMember, isEditChannel: true })
+      : onOpen(action, { member: thisMember });
   };
   console.log(channel);
 
@@ -42,11 +39,11 @@ export const ServerChannel = ({
       >
         {channel?.name}
       </p>
-      {true && (
+      {thisMember?.role !== "guest" && (
         <div className="ml-auto flex items-center gap-x-2">
           <ActionTooltip label="Edit">
             <Edit
-              //   onClick={(e) => onAction(e, "editChannel")}
+              onClick={(e) => onAction(e, "createChannel")}
               className="hidden group-hover:block w-4 h-4 text-zinc-500 hover:text-zinc-600 dark:text-zinc-400 dark:hover:text-zinc-300 transition"
             />
           </ActionTooltip>

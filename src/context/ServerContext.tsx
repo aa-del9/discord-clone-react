@@ -50,6 +50,8 @@ const ServerProvider = ({ children }: { children: React.ReactNode }) => {
   };
 
   const updateServerChannels = (channel: Channel, serverId: string) => {
+    //api call
+
     const newServers = memberWithServerWithUser.map((server) => {
       if (server.servers.$id === serverId) {
         const newChannel = server.servers.channels.push({

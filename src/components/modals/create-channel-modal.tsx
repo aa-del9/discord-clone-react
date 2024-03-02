@@ -38,8 +38,8 @@ const formSchema = z.object({
 export const CreateChannelModal = () => {
   const { memberWithServerWithUser, updateServerChannels } = useServerContext();
   const { isOpen, onClose, type, data } = useModal();
-  const { serverDetail, member, channelType } = data;
-  console.log(serverDetail, member, channelType);
+  const { member, channelType, channel, isEditChannel } = data;
+  console.log(member, channelType);
   const isModalOpen = isOpen && type === "createChannel";
 
   const form = useForm<z.infer<typeof formSchema>>({
@@ -53,26 +53,32 @@ export const CreateChannelModal = () => {
   const isLoading = form.formState.isSubmitting;
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
-    console.log(values);
-    const newChannel = await createChannel({
-      name: values.name,
-      type: values.channelType,
-      server: serverDetail?.$id ? serverDetail.$id : "",
-      creatorid: member?.$id ? member.$id : "",
-    });
-    console.log(newChannel);
+    // both context calls
 
-    if (!newChannel?.$id) {
-      return;
+    if (isEditChannel) {
+      // edit channel
     } else {
-      console.log("Channel created");
-      updateServerChannels(
-        { $id: newChannel.$id, name: newChannel.name, type: newChannel.type },
-        serverDetail?.$id ? serverDetail.$id : ""
-      );
-      console.log(memberWithServerWithUser);
-      onClose();
+      console.log(values);
+      const newChannel = await createChannel({
+        name: values.name,
+        type: values.channelType,
+        server: member?.servers?.$id ? member.servers.$id : "",
+        creatorid: member?.$id ? member.$id : "",
+      });
+      console.log(newChannel);
+
+      if (!newChannel?.$id) {
+        return;
+      } else {
+        console.log("Channel created");
+        updateServerChannels(
+          { $id: newChannel.$id, name: newChannel.name, type: newChannel.type },
+          member?.servers?.$id ? member.servers.$id : ""
+        );
+        console.log(memberWithServerWithUser);
+      }
     }
+    onClose();
     form.reset();
   };
 
@@ -124,6 +130,7 @@ export const CreateChannelModal = () => {
                               </p>
                             </FormLabel>
                             <RadioGroupItem
+                              disabled={isEditChannel}
                               value="text"
                               className="mr-5 w-5 h-5"
                               checked={field.value === "text"}

@@ -1,17 +1,18 @@
 import { useModal } from "@/hooks/use-model-store";
 import { ActionTooltip } from "../action-tooltip";
 import { Plus } from "lucide-react";
+import { MemberWithServerWithUser } from "@/types";
 
 interface ServerSectionProps {
   label: string;
-  role?: string;
+  thisMember: MemberWithServerWithUser;
   sectionType: "channels" | "members";
   channelType?: "text" | "voice";
 }
 
 export const ServerSection = ({
   label,
-  role,
+  thisMember,
   sectionType,
   channelType,
 }: ServerSectionProps) => {
@@ -22,10 +23,15 @@ export const ServerSection = ({
       <p className="text-xs uppercase font-semibold text-zinc-500 dark:text-zinc-400">
         {label}
       </p>
-      {role !== "guest" && sectionType === "channels" && (
+      {thisMember.role !== "guest" && sectionType === "channels" && (
         <ActionTooltip label="Create Channel" side="top">
           <button
-            onClick={() => onOpen("createChannel", { channelType })}
+            onClick={() =>
+              onOpen("createChannel", {
+                channelType,
+                member: thisMember,
+              })
+            }
             className="text-zinc-500 hover:text-zinc-600 dark:text-zinc-400 dark:hover:text-zinc-300 transition"
           >
             <Plus className="h-4 w-4" />
