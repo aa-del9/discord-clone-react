@@ -1,4 +1,5 @@
 import {
+  Channel,
   INewChannel,
   INewMember,
   INewServer,
@@ -10,6 +11,7 @@ import {
 import { account, appwriteConfig, databases, storage } from "./config";
 import { ID, Query } from "appwrite";
 import { v4 as uuidv4 } from "uuid";
+import { channel } from "process";
 
 export const createUserAccount = async (user: INewUser) => {
   const newAccount = await account
@@ -401,6 +403,22 @@ export const createChannel = async (channel: INewChannel) => {
       channel
     );
     return newChannel;
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+export const editChannel = async (editedName: string, channel: Channel) => {
+  try {
+    const updatedChannel = await databases.updateDocument(
+      appwriteConfig.databaseId,
+      appwriteConfig.channelsCollectionId,
+      channel?.$id,
+      {
+        name: editedName,
+      }
+    );
+    return updatedChannel;
   } catch (error) {
     console.log(error);
   }

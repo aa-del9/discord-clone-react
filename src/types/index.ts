@@ -30,8 +30,9 @@ export type ServerContextType = {
   setMembers: React.Dispatch<React.SetStateAction<Member[]>>;
   getServers: () => Promise<boolean>;
   getMembers: (serverId: string) => Promise<boolean>;
-  updateServerChannels: (channel: Channel, serverId: string) => void;
+  createServerChannels: (values: ChannelFormValue, member: Member) => void;
   updateServerInfo: (server: ServerWithChannels) => void;
+  editServerChannels: (editedName: string, channel: Channel) => void;
 };
 
 export type IUser =
@@ -117,5 +118,10 @@ export type Channel = {
   $id: string;
   name: string;
   creatorid?: string;
+  type: string;
+};
+
+export type ChannelFormValue = {
+  name: string;
   type: string;
 };

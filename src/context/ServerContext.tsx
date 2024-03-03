@@ -1,8 +1,14 @@
 import { useUserContext } from "@/hooks/use-user-context";
-import { getAllServerMembers, getServersOfUser } from "@/lib/appwrite/api";
+import {
+  createChannel,
+  editChannel,
+  getAllServerMembers,
+  getServersOfUser,
+} from "@/lib/appwrite/api";
 import { INITIAL_SERVER, INITIAL_STATE } from "@/lib/constants/server";
 import {
   Channel,
+  ChannelFormValue,
   Member,
   MemberWithServerWithUser,
   ServerContextType,
@@ -36,6 +42,7 @@ const ServerProvider = ({ children }: { children: React.ReactNode }) => {
       return false;
     }
   };
+
   const getMembers = async (serverId: string) => {
     try {
       const res = await getAllServerMembers(serverId);
@@ -49,22 +56,51 @@ const ServerProvider = ({ children }: { children: React.ReactNode }) => {
     }
   };
 
-  const updateServerChannels = (channel: Channel, serverId: string) => {
-    //api call
+  const editServerChannels = async (editedName: string, channel: Channel) => {
+    try {
+      const res = await editChannel(editedName, channel);
+      console.log(res);
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
-    const newServers = memberWithServerWithUser.map((server) => {
-      if (server.servers.$id === serverId) {
-        const newChannel = server.servers.channels.push({
-          $id: channel.$id,
-          name: channel.name,
-          type: channel.type,
+  const createServerChannels = async (
+    values: ChannelFormValue,
+    member: Member
+  ) => {
+    //api call
+    try {
+      const newChannelFromAPI = await createChannel({
+        name: values.name,
+        type: values.channelType,
+        server: member?.servers?.$id ? member.servers.$id : "",
+        creatorid: member?.$id ? member.$id : "",
+      });
+      if (!newChannelFromAPI?.$id) {
+        return;
+      } else {
+        console.log("Channel created");
+        console.log(newChannelFromAPI);
+
+        console.log(memberWithServerWithUser);
+        const newServers = memberWithServerWithUser.map((server) => {
+          if (server.servers.$id === member?.servers?.$id) {
+            const newChannel = server.servers.channels.push({
+              $id: newChannelFromAPI.$id,
+              name: newChannelFromAPI.name,
+              type: newChannelFromAPI.type,
+            });
+            return { ...server, channels: newChannel };
+          }
+          return server;
         });
-        return { ...server, channels: newChannel };
+        console.log(newServers);
+        setMemberWithServerWithUser(newServers);
       }
-      return server;
-    });
-    console.log(newServers);
-    setMemberWithServerWithUser(newServers);
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   const updateServerInfo = (server: ServerWithChannels) => {
@@ -86,8 +122,9 @@ const ServerProvider = ({ children }: { children: React.ReactNode }) => {
     setIsLoading,
     getServers,
     getMembers,
-    updateServerChannels,
+    createServerChannels,
     updateServerInfo,
+    editServerChannels,
   };
 
   useEffect(() => {

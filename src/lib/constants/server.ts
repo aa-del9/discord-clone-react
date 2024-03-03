@@ -9,8 +9,9 @@ export const INITIAL_STATE = {
   setMembers: () => {},
   getServers: async () => false as boolean,
   getMembers: async () => false as boolean,
-  updateServerChannels: () => {},
+  createServerChannels: () => {},
   updateServerInfo: () => {},
+  editServerChannels: () => {},
 };
 
 export const INITIAL_SERVER = {

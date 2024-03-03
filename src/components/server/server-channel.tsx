@@ -17,11 +17,15 @@ export const ServerChannel = ({ channel, thisMember }: ServerChannelProps) => {
   const onAction = (e: React.MouseEvent, action: ModalType) => {
     e.stopPropagation();
     action === "createChannel"
-      ? onOpen(action, { channel, member: thisMember, isEditChannel: true })
+      ? onOpen(action, {
+          channel,
+          channelType: channel?.type ? channel.type : undefined,
+          member: thisMember,
+          isEditChannel: true,
+        })
       : onOpen(action, { member: thisMember });
   };
   console.log(channel);
-
   return (
     <button
       //   onClick={onClick}

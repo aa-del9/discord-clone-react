@@ -21,26 +21,40 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { useModal } from "@/hooks/use-model-store";
 import { RadioGroup, RadioGroupItem } from "../ui/radio-group";
-import { createChannel } from "@/lib/appwrite/api";
 import Loader from "../shared/Loader";
 import { useEffect } from "react";
 import { useServerContext } from "@/hooks/use-server-context";
-
-const formSchema = z.object({
-  name: z.string().min(1, {
-    message: "Channel name is required.",
-  }),
-  channelType: z.enum(["text", "voice"], {
-    required_error: "Channel type is required.",
-  }),
-});
+import { Channel, Member } from "@/types";
 
 export const CreateChannelModal = () => {
-  const { memberWithServerWithUser, updateServerChannels } = useServerContext();
+  const dummyMember: Member = {
+    $id: "",
+    userid: undefined,
+    role: "",
+    servers: undefined,
+    hasLeaved: false,
+  };
+  const dummyChannel: Channel = {
+    $id: "",
+    name: "string",
+    creatorid: "string",
+    type: "string",
+  };
   const { isOpen, onClose, type, data } = useModal();
+  const { createServerChannels, editServerChannels } = useServerContext();
   const { member, channelType, channel, isEditChannel } = data;
-  console.log(member, channelType);
   const isModalOpen = isOpen && type === "createChannel";
+  console.log(isEditChannel);
+  console.log(channelType);
+
+  const formSchema = z.object({
+    name: z.string().min(1, {
+      message: "Channel name is required.",
+    }),
+    channelType: z.enum(["text", "voice"], {
+      required_error: "Channel type is required.",
+    }),
+  });
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -57,26 +71,15 @@ export const CreateChannelModal = () => {
 
     if (isEditChannel) {
       // edit channel
+      console.log(values, channel);
+
+      await editServerChannels(
+        values.name,
+        channel?.$id ? channel : dummyChannel
+      );
     } else {
       console.log(values);
-      const newChannel = await createChannel({
-        name: values.name,
-        type: values.channelType,
-        server: member?.servers?.$id ? member.servers.$id : "",
-        creatorid: member?.$id ? member.$id : "",
-      });
-      console.log(newChannel);
-
-      if (!newChannel?.$id) {
-        return;
-      } else {
-        console.log("Channel created");
-        updateServerChannels(
-          { $id: newChannel.$id, name: newChannel.name, type: newChannel.type },
-          member?.servers?.$id ? member.servers.$id : ""
-        );
-        console.log(memberWithServerWithUser);
-      }
+      await createServerChannels(values, member?.$id ? member : dummyMember);
     }
     onClose();
     form.reset();
@@ -152,6 +155,7 @@ export const CreateChannelModal = () => {
                               </p>
                             </FormLabel>
                             <RadioGroupItem
+                              disabled={isEditChannel}
                               checked={field.value === "voice"}
                               value="voice"
                               className="mr-5 w-5 h-5"
@@ -184,7 +188,9 @@ export const CreateChannelModal = () => {
                         <Input
                           disabled={isLoading}
                           className="bg-zinc-300/50 dark:bg-background border-0 focus-visible:ring-0 text-primary focus-visible:ring-offset-0"
-                          placeholder="new-channel"
+                          placeholder={
+                            !isEditChannel ? "new-channel" : "Edit name"
+                          }
                           {...field}
                         />
                       </div>
@@ -198,10 +204,12 @@ export const CreateChannelModal = () => {
               <Button type="submit" variant="default" disabled={isLoading}>
                 {isLoading ? (
                   <div className="flex gap-2">
-                    <Loader /> Creating...
+                    <Loader /> {!isEditChannel ? "Creating..." : "Editing..."}
                   </div>
-                ) : (
+                ) : !isEditChannel ? (
                   "Create"
+                ) : (
+                  "Edit"
                 )}
               </Button>
             </DialogFooter>
