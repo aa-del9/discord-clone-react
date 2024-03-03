@@ -5,53 +5,42 @@ import { ServerSection } from "./server-section";
 import { ServerChannel } from "./server-channel";
 
 interface ServerSidebarProps {
-  memberWithServersAndUser: MemberWithServerWithUser;
+  thisMember: MemberWithServerWithUser;
 }
 
-export const ServerSidebar = ({
-  memberWithServersAndUser,
-}: ServerSidebarProps) => {
-  console.log(
-    memberWithServersAndUser,
-    "Role=" + memberWithServersAndUser?.role
-  );
+export const ServerSidebar = ({ thisMember }: ServerSidebarProps) => {
+  console.log(thisMember, "Role=" + thisMember?.role);
 
   return (
     <div className="flex flex-col h-full text-primary w-full dark:bg-[#2B2D32] bg-[#F2F3F5]">
-      <ServerHeader memberWithServersAndUser={memberWithServersAndUser} />
+      <ServerHeader memberWithServersAndUser={thisMember} />
 
       <ScrollArea className="flex-1 px-3">
         <ServerSection
           sectionType="channels"
           channelType="text"
-          role={memberWithServersAndUser?.role}
+          thisMember={thisMember}
           label="Text Channels"
         />
-        {memberWithServersAndUser?.servers?.channels?.map(
+        {thisMember?.servers?.channels?.map(
           (channel) =>
-            channel.type === "text" && (
-              <ServerChannel
-                channel={channel}
-                role={memberWithServersAndUser?.role}
-                server={memberWithServersAndUser?.servers}
-              />
+            channel.type === "text" &&
+            !channel.isDeleted && (
+              <ServerChannel channel={channel} thisMember={thisMember} />
             )
         )}
         <ServerSection
           sectionType="channels"
           channelType="voice"
-          role={memberWithServersAndUser?.role}
+          thisMember={thisMember}
           label="Voice Channels"
         />
 
-        {memberWithServersAndUser?.servers?.channels?.map(
+        {thisMember?.servers?.channels?.map(
           (channel) =>
-            channel.type === "voice" && (
-              <ServerChannel
-                channel={channel}
-                role={memberWithServersAndUser?.role}
-                server={memberWithServersAndUser?.servers}
-              />
+            channel.type === "voice" &&
+            !channel.isDeleted && (
+              <ServerChannel channel={channel} thisMember={thisMember} />
             )
         )}
       </ScrollArea>

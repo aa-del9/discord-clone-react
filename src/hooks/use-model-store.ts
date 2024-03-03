@@ -1,4 +1,4 @@
-import { Member, Server } from "@/types";
+import { Channel, Member, Server } from "@/types";
 import { create } from "zustand";
 
 export type ModalType =
@@ -9,12 +9,15 @@ export type ModalType =
   | "serverSettings"
   | "kickMember"
   | "createChannel"
-  | "memberSidebar";
+  | "memberSidebar"
+  | "deleteChannel";
 
 interface ModalData {
   serverDetail?: Server;
   member?: Member;
   channelType?: "text" | "voice";
+  channel?: Channel;
+  isEditChannel?: boolean;
 }
 
 interface ModalStore {

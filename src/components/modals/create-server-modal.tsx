@@ -25,8 +25,8 @@ import FileUploader from "../shared/FileUploader";
 import { useUserContext } from "@/hooks/use-user-context";
 import { createServer } from "@/lib/appwrite/api";
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
 import Loader from "../../components/shared/Loader";
+import { useServerContext } from "@/hooks/use-server-context";
 
 const MAX_FILE_SIZE = 5000000;
 const ACCEPTED_IMAGE_TYPES = [
@@ -52,10 +52,11 @@ const formSchema = z.object({
 });
 
 export const CreateServerModal = () => {
-  const navigate = useNavigate();
   const { user } = useUserContext();
   const [error, setError] = useState<string>("");
   const { isOpen, onClose, type } = useModal();
+  const { memberWithServerWithUser, setMemberWithServerWithUser } =
+    useServerContext();
 
   const isModalOpen = isOpen && type === "createServer";
 
@@ -71,22 +72,21 @@ export const CreateServerModal = () => {
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
     console.log(values, user);
-    const server = await createServer({
+    const member = await createServer({
       name: values.name,
       image: values.image[0],
       creatorid: user?.accountid,
       createdAt: new Date(),
     });
-    console.log(server);
+    console.log(member);
 
-    if (!server?.$id) {
+    if (!member?.$id) {
       setError("Something went wrong.");
       return;
     }
+    setMemberWithServerWithUser([...memberWithServerWithUser, member]);
     form.reset();
-    navigate("/servers/" + server.$id);
-    window.location.reload();
-    console.log(server);
+    onClose();
   };
 
   const handleClose = () => {

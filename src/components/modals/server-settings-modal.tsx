@@ -26,6 +26,7 @@ import { useUserContext } from "@/hooks/use-user-context";
 import { editServer } from "@/lib/appwrite/api";
 import { useEffect, useState } from "react";
 import Loader from "../shared/Loader";
+import { useServerContext } from "@/hooks/use-server-context";
 
 const MAX_FILE_SIZE = 5000000;
 const ACCEPTED_IMAGE_TYPES = [
@@ -51,6 +52,7 @@ const formSchema = z.object({
 });
 
 export const ServerSettingsModal = () => {
+  const { updateServerInfo } = useServerContext();
   const { user } = useUserContext();
   const [error, setError] = useState<string>("");
   const { isOpen, onClose, type, data } = useModal();
@@ -81,9 +83,17 @@ export const ServerSettingsModal = () => {
       setError("Something went wrong.");
       return;
     }
+    updateServerInfo({
+      $id: editedServer.$id,
+      name: editedServer.name,
+      imageUrl: editedServer.imageUrl,
+      inviteCode: editedServer.inviteCode,
+      createdAt: editedServer.createdAt,
+      channels: editedServer.channels,
+    });
     console.log(editedServer);
-
-    window.location.reload();
+    form.reset();
+    onClose();
   };
 
   const handleClose = () => {

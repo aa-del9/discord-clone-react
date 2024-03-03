@@ -181,7 +181,7 @@ export const createServer = async (server: INewServer) => {
       throw Error;
     }
 
-    return newServer;
+    return newMember;
   } catch (error) {
     console.log(error);
 
@@ -299,14 +299,11 @@ export const getServersOfUser = async (userid: string | undefined) => {
     );
   console.log(membersWithServersAndUser);
 
-  // const servers = membership.documents.map((document) => document.servers);
-  // console.log(servers);
-
   return membersWithServersAndUser;
 };
 
 export const createMember = async (member: INewMember) => {
-  const newMember = await databases
+  const newMember = databases
     .createDocument(
       appwriteConfig.databaseId,
       appwriteConfig.membersCollectionId,
@@ -408,6 +405,48 @@ export const createChannel = async (channel: INewChannel) => {
     console.log(error);
   }
 };
+
+export const editChannel = async (editedName: string, channelid: string) => {
+  try {
+    const updatedChannel = await databases.updateDocument(
+      appwriteConfig.databaseId,
+      appwriteConfig.channelsCollectionId,
+      channelid,
+      {
+        name: editedName,
+      }
+    );
+    return updatedChannel;
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+export const deleteChannel = async (channelid:string)=>{
+  try {
+    //set relationship to null
+  const updatedChannel = await databases.updateDocument(
+    appwriteConfig.databaseId,
+    appwriteConfig.channelsCollectionId,
+    channelid,
+    {
+      isDeleted: true,
+    }
+  );
+
+  if(updatedChannel?.$id){
+    return updatedChannel;
+  }
+  else{
+    throw Error;
+  }
+ 
+} catch (error) {
+    console.log(error);
+    
+  }
+}
+
 
 export const getFilePreview = async (fileId: string) => {
   try {

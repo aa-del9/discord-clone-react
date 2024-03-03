@@ -21,9 +21,9 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { useModal } from "@/hooks/use-model-store";
 import { RadioGroup, RadioGroupItem } from "../ui/radio-group";
-import { createChannel } from "@/lib/appwrite/api";
 import Loader from "../shared/Loader";
 import { useEffect } from "react";
+import { useServerContext } from "@/hooks/use-server-context";
 
 const formSchema = z.object({
   name: z.string().min(1, {
@@ -36,10 +36,11 @@ const formSchema = z.object({
 
 export const CreateChannelModal = () => {
   const { isOpen, onClose, type, data } = useModal();
-  const { serverDetail, member, channelType } = data;
-  console.log(serverDetail, member, channelType);
-
+  const { createServerChannels, editServerChannels } = useServerContext();
+  const { member, channelType, channel, isEditChannel } = data;
   const isModalOpen = isOpen && type === "createChannel";
+  console.log(isEditChannel);
+  console.log(channelType);
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -52,17 +53,22 @@ export const CreateChannelModal = () => {
   const isLoading = form.formState.isSubmitting;
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
-    console.log(values);
-    const newChannel = await createChannel({
-      name: values.name,
-      type: values.channelType,
-      server: serverDetail?.$id ? serverDetail.$id : "",
-      creatorid: member?.$id ? member.$id : "",
-    });
-    console.log(newChannel);
+    // both context calls
+    console.log(values, channel);
 
-    if (!newChannel?.$id) return;
-
+    if (isEditChannel) {
+      // edit channel
+      await editServerChannels(values.name, channel?.$id ? channel.$id : "");
+    } else {
+      console.log(values);
+      await createServerChannels({
+        name: values.name,
+        type: values.channelType,
+        server: member?.servers?.$id ? member.servers.$id : "",
+        creatorid: member?.$id ? member.$id : "",
+      });
+    }
+    onClose();
     form.reset();
   };
 
@@ -114,6 +120,7 @@ export const CreateChannelModal = () => {
                               </p>
                             </FormLabel>
                             <RadioGroupItem
+                              disabled={isEditChannel}
                               value="text"
                               className="mr-5 w-5 h-5"
                               checked={field.value === "text"}
@@ -135,6 +142,7 @@ export const CreateChannelModal = () => {
                               </p>
                             </FormLabel>
                             <RadioGroupItem
+                              disabled={isEditChannel}
                               checked={field.value === "voice"}
                               value="voice"
                               className="mr-5 w-5 h-5"
@@ -167,7 +175,9 @@ export const CreateChannelModal = () => {
                         <Input
                           disabled={isLoading}
                           className="bg-zinc-300/50 dark:bg-background border-0 focus-visible:ring-0 text-primary focus-visible:ring-offset-0"
-                          placeholder="new-channel"
+                          placeholder={
+                            !isEditChannel ? "new-channel" : channel?.name
+                          }
                           {...field}
                         />
                       </div>
@@ -181,10 +191,12 @@ export const CreateChannelModal = () => {
               <Button type="submit" variant="default" disabled={isLoading}>
                 {isLoading ? (
                   <div className="flex gap-2">
-                    <Loader /> Creating...
+                    <Loader /> {!isEditChannel ? "Creating..." : "Editing..."}
                   </div>
-                ) : (
+                ) : !isEditChannel ? (
                   "Create"
+                ) : (
+                  "Edit"
                 )}
               </Button>
             </DialogFooter>

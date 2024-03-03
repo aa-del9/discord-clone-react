@@ -7,7 +7,7 @@ export type INewServer = {
   createdAt: Date;
 };
 
-export type IContextType = {
+export type UserContextType = {
   user: IUser;
   isLoading: boolean;
   setUser: React.Dispatch<React.SetStateAction<IUser>>;
@@ -17,6 +17,23 @@ export type IContextType = {
   checkAuthUser: () => Promise<boolean>;
   isInvite: boolean;
   setIsInvite: React.Dispatch<React.SetStateAction<boolean>>;
+};
+
+export type ServerContextType = {
+  memberWithServerWithUser: MemberWithServerWithUser[];
+  members: Member[];
+  isLoading: boolean;
+  setIsLoading: React.Dispatch<React.SetStateAction<boolean>>;
+  setMemberWithServerWithUser: React.Dispatch<
+    React.SetStateAction<MemberWithServerWithUser[]>
+  >;
+  setMembers: React.Dispatch<React.SetStateAction<Member[]>>;
+  getServers: () => Promise<boolean>;
+  getMembers: (serverId: string) => Promise<boolean>;
+  createServerChannels: (channel: INewChannel) => void;
+  updateServerInfo: (server: ServerWithChannels) => void;
+  editServerChannels: (editedName: string, channelid: string) => void;
+  updateDeleteChannel: (channelid: string) => void;
 };
 
 export type IUser =
@@ -84,13 +101,6 @@ export type MemberWithServerWithUser = {
   hasLeaved: boolean;
 };
 
-// export type ServerWithMembersWithChannels = {
-//   server: Server;
-//   members: Member[];
-//   channels: Channel[];
-//   totalMembers: number;
-// };
-
 export type INewChannel = {
   name: string;
   server: string;
@@ -102,5 +112,6 @@ export type Channel = {
   $id: string;
   name: string;
   creatorid?: string;
-  type: string;
+  type: "voice" | "text";
+  isDeleted: boolean;
 };

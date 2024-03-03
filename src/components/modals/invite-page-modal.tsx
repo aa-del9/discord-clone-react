@@ -10,12 +10,12 @@ import { Label } from "../ui/label";
 import { Button } from "../ui/button";
 import { checkIfMember, createMember } from "@/lib/appwrite/api";
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
 import Loader from "../shared/Loader";
+import { useOrigin } from "@/hooks/use-origin";
 
 export const InvitePageModal = () => {
+  const origin = useOrigin();
   const [isLoading, setIsLoading] = useState<boolean>(false);
-  const navigate = useNavigate();
   const { isOpen, data, type, onClose } = useModal();
   const { serverDetail } = data;
   const isModalOpen = isOpen && type === "invitation";
@@ -54,7 +54,7 @@ export const InvitePageModal = () => {
     );
   };
   const redirectToServer = () => {
-    navigate("/servers/" + serverDetail?.$id);
+    window.location.href = origin + "/servers/" + serverDetail?.$id;
     onClose();
   };
 
