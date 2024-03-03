@@ -30,9 +30,10 @@ export type ServerContextType = {
   setMembers: React.Dispatch<React.SetStateAction<Member[]>>;
   getServers: () => Promise<boolean>;
   getMembers: (serverId: string) => Promise<boolean>;
-  createServerChannels: (values: ChannelFormValue, member: Member) => void;
+  createServerChannels: (channel: INewChannel) => void;
   updateServerInfo: (server: ServerWithChannels) => void;
-  editServerChannels: (editedName: string, channel: Channel) => void;
+  editServerChannels: (editedName: string, channelid: string) => void;
+  updateDeleteChannel: (channelid: string) => void;
 };
 
 export type IUser =
@@ -100,13 +101,6 @@ export type MemberWithServerWithUser = {
   hasLeaved: boolean;
 };
 
-// export type ServerWithMembersWithChannels = {
-//   server: Server;
-//   members: Member[];
-//   channels: Channel[];
-//   totalMembers: number;
-// };
-
 export type INewChannel = {
   name: string;
   server: string;
@@ -118,10 +112,6 @@ export type Channel = {
   $id: string;
   name: string;
   creatorid?: string;
-  type: string;
-};
-
-export type ChannelFormValue = {
-  name: string;
-  type: string;
+  type: "voice" | "text";
+  isDeleted: boolean;
 };

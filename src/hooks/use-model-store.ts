@@ -9,7 +9,8 @@ export type ModalType =
   | "serverSettings"
   | "kickMember"
   | "createChannel"
-  | "memberSidebar";
+  | "memberSidebar"
+  | "deleteChannel";
 
 interface ModalData {
   serverDetail?: Server;

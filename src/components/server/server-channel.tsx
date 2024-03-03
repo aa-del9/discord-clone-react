@@ -1,6 +1,6 @@
 import { ModalType, useModal } from "@/hooks/use-model-store";
 import { cn } from "@/lib/utils";
-import { Channel, MemberWithServerWithUser, Server } from "@/types";
+import { Channel, MemberWithServerWithUser } from "@/types";
 import { useParams } from "react-router-dom";
 import { ActionTooltip } from "../action-tooltip";
 import { Edit, Lock, Trash } from "lucide-react";
@@ -23,7 +23,7 @@ export const ServerChannel = ({ channel, thisMember }: ServerChannelProps) => {
           member: thisMember,
           isEditChannel: true,
         })
-      : onOpen(action, { member: thisMember });
+      : onOpen(action, {channel: channel });
   };
   console.log(channel);
   return (
@@ -53,7 +53,7 @@ export const ServerChannel = ({ channel, thisMember }: ServerChannelProps) => {
           </ActionTooltip>
           <ActionTooltip label="Delete">
             <Trash
-              //   onClick={(e) => onAction(e, "deleteChannel")}
+                onClick={(e) => onAction(e, "deleteChannel")}
               className="hidden group-hover:block w-4 h-4 text-zinc-500 hover:text-zinc-600 dark:text-zinc-400 dark:hover:text-zinc-300 transition"
             />
           </ActionTooltip>

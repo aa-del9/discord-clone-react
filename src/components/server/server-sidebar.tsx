@@ -24,7 +24,8 @@ export const ServerSidebar = ({ thisMember }: ServerSidebarProps) => {
         />
         {thisMember?.servers?.channels?.map(
           (channel) =>
-            channel.type === "text" && (
+            channel.type === "text" &&
+            !channel.isDeleted && (
               <ServerChannel channel={channel} thisMember={thisMember} />
             )
         )}
@@ -37,7 +38,8 @@ export const ServerSidebar = ({ thisMember }: ServerSidebarProps) => {
 
         {thisMember?.servers?.channels?.map(
           (channel) =>
-            channel.type === "voice" && (
+            channel.type === "voice" &&
+            !channel.isDeleted && (
               <ServerChannel channel={channel} thisMember={thisMember} />
             )
         )}

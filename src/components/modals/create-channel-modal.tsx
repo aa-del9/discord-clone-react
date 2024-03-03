@@ -24,37 +24,23 @@ import { RadioGroup, RadioGroupItem } from "../ui/radio-group";
 import Loader from "../shared/Loader";
 import { useEffect } from "react";
 import { useServerContext } from "@/hooks/use-server-context";
-import { Channel, Member } from "@/types";
+
+const formSchema = z.object({
+  name: z.string().min(1, {
+    message: "Channel name is required.",
+  }),
+  channelType: z.enum(["text", "voice"], {
+    required_error: "Channel type is required.",
+  }),
+});
 
 export const CreateChannelModal = () => {
-  const dummyMember: Member = {
-    $id: "",
-    userid: undefined,
-    role: "",
-    servers: undefined,
-    hasLeaved: false,
-  };
-  const dummyChannel: Channel = {
-    $id: "",
-    name: "string",
-    creatorid: "string",
-    type: "string",
-  };
   const { isOpen, onClose, type, data } = useModal();
   const { createServerChannels, editServerChannels } = useServerContext();
   const { member, channelType, channel, isEditChannel } = data;
   const isModalOpen = isOpen && type === "createChannel";
   console.log(isEditChannel);
   console.log(channelType);
-
-  const formSchema = z.object({
-    name: z.string().min(1, {
-      message: "Channel name is required.",
-    }),
-    channelType: z.enum(["text", "voice"], {
-      required_error: "Channel type is required.",
-    }),
-  });
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -68,18 +54,19 @@ export const CreateChannelModal = () => {
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
     // both context calls
+    console.log(values, channel);
 
     if (isEditChannel) {
       // edit channel
-      console.log(values, channel);
-
-      await editServerChannels(
-        values.name,
-        channel?.$id ? channel : dummyChannel
-      );
+      await editServerChannels(values.name, channel?.$id ? channel.$id : "");
     } else {
       console.log(values);
-      await createServerChannels(values, member?.$id ? member : dummyMember);
+      await createServerChannels({
+        name: values.name,
+        type: values.channelType,
+        server: member?.servers?.$id ? member.servers.$id : "",
+        creatorid: member?.$id ? member.$id : "",
+      });
     }
     onClose();
     form.reset();
@@ -189,7 +176,7 @@ export const CreateChannelModal = () => {
                           disabled={isLoading}
                           className="bg-zinc-300/50 dark:bg-background border-0 focus-visible:ring-0 text-primary focus-visible:ring-offset-0"
                           placeholder={
-                            !isEditChannel ? "new-channel" : "Edit name"
+                            !isEditChannel ? "new-channel" : channel?.name
                           }
                           {...field}
                         />

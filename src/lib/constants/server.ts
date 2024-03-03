@@ -12,6 +12,7 @@ export const INITIAL_STATE = {
   createServerChannels: () => {},
   updateServerInfo: () => {},
   editServerChannels: () => {},
+  updateDeleteChannel: () => {},
 };
 
 export const INITIAL_SERVER = {
