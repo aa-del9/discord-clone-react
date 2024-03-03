@@ -16,7 +16,7 @@ export const DeleteChannelModal = () => {
   const [isLoading, setLoading] = useState<boolean>(false);
   const { isOpen, onClose, data, type } = useModal();
   const { channel } = data;
-  const {updateDeleteChannel} = useServerContext();
+  const { updateDeleteChannel } = useServerContext();
   const isModalOpen = isOpen && type === "deleteChannel";
 
   const onModalClose = () => {
@@ -26,11 +26,13 @@ export const DeleteChannelModal = () => {
   const deleteChannel = async () => {
     setLoading(true);
     console.log(channel?.$id);
-    
-    const deletedChannel = await updateDeleteChannel(channel?.$id?channel.$id:"");
+
+    const deletedChannel = await updateDeleteChannel(
+      channel?.$id ? channel.$id : ""
+    );
     console.log(deletedChannel);
-    
     setLoading(false);
+    onClose();
     console.log("error");
   };
 
@@ -43,8 +45,9 @@ export const DeleteChannelModal = () => {
           </DialogTitle>
           <div>
             <Label className="text-sm text-zinc-500 dark:text-primary/70">
-              Are you sure you want to delete #<span className="font-extrabold text-md">
-              {channel?.name}</span>? This cannot be undone.
+              Are you sure you want to delete #
+              <span className="font-extrabold text-md">{channel?.name}</span>?
+              This cannot be undone.
             </Label>
           </div>
         </DialogHeader>

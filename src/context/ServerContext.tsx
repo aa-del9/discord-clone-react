@@ -132,7 +132,7 @@ const ServerProvider = ({ children }: { children: React.ReactNode }) => {
     console.log(deletedChannel);
 
     if (!deletedChannel?.$id) {
-      return;
+      return false;
     } else {
       console.log("Channel deleted");
       console.log(deletedChannel);
@@ -159,8 +159,8 @@ const ServerProvider = ({ children }: { children: React.ReactNode }) => {
         }
       });
       console.log(newMembersWithServer);
-
       setMemberWithServerWithUser(newMembersWithServer);
+      return true;
     }
   };
 
