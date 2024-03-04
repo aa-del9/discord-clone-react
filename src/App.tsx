@@ -1,4 +1,4 @@
-import { Route, Routes } from "react-router-dom";
+import { Navigate, Route, Routes } from "react-router-dom";
 import "./App.css";
 import AuthPage from "./routes/auth/AuthPage";
 import LoginForm from "@/routes/auth/LoginForm";
@@ -12,6 +12,7 @@ const App = () => {
   return (
     <main className="h-[100vh]">
       <Routes>
+        <Route path="/" element={<Navigate to="/login" />} />
         <Route element={<AuthPage />}>
           <Route path="/login" element={<LoginForm />} />
           <Route path="/register" element={<RegisterForm />} />
