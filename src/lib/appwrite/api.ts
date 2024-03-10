@@ -258,12 +258,12 @@ export const editServer = async (server: {
   }
 };
 
-export const getMembersWithServers = async (userid: string | undefined) => {
+export const getMembersWithServers = async (userid: string) => {
   const membership = await databases
     .listDocuments(
       appwriteConfig.databaseId,
       appwriteConfig.membersCollectionId,
-      [Query.equal("userid", userid ? userid : "")]
+      [Query.equal("userid", userid)]
     )
     .then(
       (res) => {
@@ -277,13 +277,13 @@ export const getMembersWithServers = async (userid: string | undefined) => {
   return membership;
 };
 
-export const getServersOfUser = async (userid: string | undefined) => {
+export const getServersOfUser = async (userid: string) => {
   const membersWithServersAndUser = await databases
     .listDocuments(
       appwriteConfig.databaseId,
       appwriteConfig.membersCollectionId,
       [
-        Query.equal("userid", userid ? userid : ""),
+        Query.equal("userid", userid),
         Query.equal("hasLeaved", false),
       ]
     )

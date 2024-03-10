@@ -58,14 +58,14 @@ export const CreateChannelModal = () => {
 
     if (isEditChannel) {
       // edit channel
-      await editServerChannels(values.name, channel?.$id ? channel.$id : "");
+      await editServerChannels(values.name, channel!.$id);
     } else {
       console.log(values);
       await createServerChannels({
         name: values.name,
         type: values.channelType,
-        server: member?.servers?.$id ? member.servers.$id : "",
-        creatorid: member?.$id ? member.$id : "",
+        server: member!.servers!.$id,
+        creatorid: member!.$id,
       });
     }
     onClose();

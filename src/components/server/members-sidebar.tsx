@@ -18,7 +18,7 @@ export const MembersSidebar = ({ thisMember, role }: MemberSidebarProps) => {
   const fetchData = async () => {
     console.log(serverId);
 
-    const res = await getAllServerMembers(serverId ? serverId : "");
+    const res = await getAllServerMembers(serverId!);
     console.log(res);
     setMembers(res ? res : []);
   };

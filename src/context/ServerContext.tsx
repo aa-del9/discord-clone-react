@@ -30,7 +30,7 @@ const ServerProvider = ({ children }: { children: React.ReactNode }) => {
       setIsLoading(true);
       console.log("ca");
 
-      const res = await getServersOfUser(user?.accountid ? user.accountid : "");
+      const res = await getServersOfUser(user!.accountid);
       console.log("[Servers in ServerContext] ", res);
       setMemberWithServerWithUser(!(res === undefined) ? res : []);
       setIsLoading(false);

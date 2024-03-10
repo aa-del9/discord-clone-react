@@ -23,10 +23,7 @@ export const InvitePageModal = () => {
   const [isJoined, setIsJoined] = useState<boolean>(false);
   const acceptInvite = async () => {
     setIsLoading(true);
-    await checkIfMember(
-      user?.accountid ? user?.accountid : "",
-      serverDetail?.$id ? serverDetail?.$id : ""
-    ).then(
+    await checkIfMember(user!.accountid, serverDetail!.$id).then(
       (res) => {
         console.log(res);
 
@@ -34,8 +31,8 @@ export const InvitePageModal = () => {
           ? console.log("Already a member")
           : createMember({
               role: "guest",
-              servers: serverDetail?.$id ? serverDetail?.$id : "",
-              userid: user?.accountid,
+              servers: serverDetail!.$id,
+              userid: user!.accountid,
             }).then(
               (res) => {
                 console.log(res);

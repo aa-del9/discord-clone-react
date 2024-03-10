@@ -23,7 +23,7 @@ export const KickMemberModal = () => {
 
   const kickMember = async () => {
     setLoading(true);
-    const res = await leaveServer(member?.$id ? member?.$id : "");
+    const res = await leaveServer(member!.$id);
     console.log(res);
     if (res.$id) {
       onModalClose();
