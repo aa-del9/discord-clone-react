@@ -9,7 +9,9 @@ const InvitePage = () => {
   const { user } = useUserContext();
   const { onOpen } = useModal();
   useEffect(() => {
-    getServerInfoFromInviteCode(params.inviteCode!).then((response) => {
+    getServerInfoFromInviteCode(
+      params?.inviteCode ? params?.inviteCode : ""
+    ).then((response) => {
       console.log(response, !user?.$id);
       user?.$id && onOpen("invitation", { serverDetail: response });
     });

@@ -27,7 +27,9 @@ export const DeleteChannelModal = () => {
     setLoading(true);
     console.log(channel?.$id);
 
-    const deletedChannel = await updateDeleteChannel(channel!.$id);
+    const deletedChannel = await updateDeleteChannel(
+      channel?.$id ? channel.$id : ""
+    );
     console.log(deletedChannel);
     setLoading(false);
     onClose();

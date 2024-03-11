@@ -22,6 +22,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { useModal } from "@/hooks/use-model-store";
 import FileUploader from "../shared/FileUploader";
+import { useUserContext } from "@/hooks/use-user-context";
 import { editServer } from "@/lib/appwrite/api";
 import { useEffect, useState } from "react";
 import Loader from "../shared/Loader";
@@ -52,6 +53,7 @@ const formSchema = z.object({
 
 export const ServerSettingsModal = () => {
   const { updateServerInfo } = useServerContext();
+  const { user } = useUserContext();
   const [error, setError] = useState<string>("");
   const { isOpen, onClose, type, data } = useModal();
   const { serverDetail } = data;
@@ -61,7 +63,7 @@ export const ServerSettingsModal = () => {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      name: serverDetail!.name,
+      name: user?.displayName.split(" ")[0] + "'s server",
       image: [],
     },
   });
@@ -73,8 +75,8 @@ export const ServerSettingsModal = () => {
     const editedServer = await editServer({
       name: values.name,
       image: values.image[0],
-      serverid: serverDetail!.$id,
-      oldImageUrl: serverDetail!.imageUrl,
+      serverid: serverDetail?.$id ? serverDetail.$id : "",
+      oldImageUrl: serverDetail?.imageUrl ? serverDetail.imageUrl : "",
     });
 
     if (!editedServer?.$id) {
@@ -143,7 +145,9 @@ export const ServerSettingsModal = () => {
                     <FormItem>
                       <FormControl>
                         <FileUploader
-                          mediaUrl={serverDetail!.imageUrl}
+                          mediaUrl={
+                            serverDetail?.imageUrl ? serverDetail.imageUrl : ""
+                          }
                           fieldChange={field.onChange}
                         />
                       </FormControl>

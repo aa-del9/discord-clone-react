@@ -22,7 +22,7 @@ export const LeaveServerModal = () => {
   const isModalOpen = isOpen && type === "leaveServer";
   const callLeaveServer = async () => {
     setIsLoading(true);
-    const response = await leaveServer(thisMember!.$id);
+    const response = await leaveServer(thisMember?.$id ? thisMember?.$id : "");
     console.log(response);
     navigate("/servers/@me");
     setIsLoading(false);

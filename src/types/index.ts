@@ -3,7 +3,7 @@ import React from "react";
 export type INewServer = {
   name: string;
   image: File;
-  creatorid: string;
+  creatorid: string | undefined;
   createdAt: Date;
 };
 
@@ -89,7 +89,7 @@ export type Member = {
 };
 export type INewMember = {
   role: string;
-  userid: string;
+  userid: string | undefined;
   servers: string;
 };
 
